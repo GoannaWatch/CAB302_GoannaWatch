@@ -59,7 +59,7 @@
 
                 <Label text=" | " />
 
-                <Hyperlink onAction="#onDashboardButtonClick"
+                <Hyperlink onAction="#onProfileButtonClick"
                            text="Profile" />
 
                 <Label text=" | " />
