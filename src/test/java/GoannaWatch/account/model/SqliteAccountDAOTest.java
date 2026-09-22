@@ -68,4 +68,44 @@ public class SqliteAccountDAOTest {
             }
         }
     }
+    @Test
+    public void testUpdateProfile(@TempDir Path folder) throws Exception {
+        String testUrl = "jdbc:sqlite:"
+                + folder.resolve("test.db").toAbsolutePath();
+        String oldUrl = System.getProperty("goannawatch.db.url");
+
+        try {
+            System.setProperty("goannawatch.db.url", testUrl);
+            DatabaseInitializer.initialize();
+
+            SqliteAccountDAO dao = new SqliteAccountDAO();
+
+            Account account = new Account(
+                    "Min", "Test", "min@example.com", "Test123!"
+            );
+            dao.addAccount(account);
+
+            Account savedAccount = dao.getAccountByEmail("min@example.com");
+            assertNotNull(savedAccount);
+
+            savedAccount.setFirstName("Alex");
+            savedAccount.setLastName("Wang");
+            savedAccount.setEmail("alex@example.com");
+
+            dao.updateAccount(savedAccount);
+
+            Account updatedAccount = dao.getAccountByEmail("alex@example.com");
+            assertNotNull(updatedAccount);
+            assertEquals("Alex Wang", updatedAccount.getFullName());
+            assertEquals(savedAccount.getId(), updatedAccount.getId());
+            assertTrue(dao.checkPassword("alex@example.com", "Test123!"));
+
+        } finally {
+            if (oldUrl == null) {
+                System.clearProperty("goannawatch.db.url");
+            } else {
+                System.setProperty("goannawatch.db.url", oldUrl);
+            }
+        }
+    }
 }
