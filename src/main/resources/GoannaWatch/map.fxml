@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
-<VBox id="contentContainer"
-      prefHeight="800"
-      prefWidth="800"
-      stylesheets="@pageStyling.css"
-      xmlns="http://javafx.com/javafx/17.0.12"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="GoannaWatch.account.controller.LandingController">
-
+<?import javafx.scene.text.Font?>
+<VBox xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            stylesheets="@pageStyling.css"
+            fx:controller="GoannaWatch.observations.controller.MapController"
+            prefHeight="800" prefWidth="800">
     <AnchorPane id="pageContent"
                 prefHeight="109.0"
                 prefWidth="603.0">
@@ -22,17 +22,6 @@
               layoutY="22.0"
               prefHeight="98.0"
               prefWidth="488.0">
-
-            <Label fx:id="welcomeLabel"
-                   alignment="CENTER"
-                   contentDisplay="CENTER"
-                   style="-fx-font-size: 26px; -fx-font-weight: bold;"
-                   text="Welcome!"
-                   textAlignment="CENTER"
-                   wrapText="true"/>
-
-            <Label fx:id="emailLabel"
-                   text="" />
         </VBox>
 
         <VBox id="contentContainer"
@@ -43,7 +32,7 @@
               scaleShape="false">
 
             <Label alignment="CENTER"
-                   text="Dashboard">
+                   text="Map">
                 <font>
                     <Font name="System Bold"
                           size="12.0" />
@@ -117,61 +106,8 @@
               vgap="10">
 
         <VBox alignment="TOP_CENTER">
-            <HBox>
-                <VBox id="pageContent">
-                    <Label text="Recent Observations">
-                        <font>
-                            <Font name="System Bold"
-                                  size="12.0" />
-                        </font>
-                    </Label>
-
-                    <Label text="Observation 1" />
-                    <Label text="Observation 2" />
-                    <Label text="Observation 3" />
-                    <Label text="Observation 4" />
-                </VBox>
-
-                <VBox id="contentContainer">
-                    <VBox id="pageContent">
-                        <Label text="Observation Map Preview">
-                            <font>
-                                <Font name="System Bold"
-                                      size="12.0" />
-                            </font>
-                        </Label>
-                    </VBox>
-
-                    <VBox id="pageContent">
-                        <Label text="Selected Observation">
-                            <font>
-                                <Font name="System Bold"
-                                      size="12.0" />
-                            </font>
-                        </Label>
-                    </VBox>
-                </VBox>
-
-                <VBox id="contentContainer">
-                    <VBox id="pageContent">
-                        <Label text="Quick Actions">
-                            <font>
-                                <Font name="System Bold"
-                                      size="12.0" />
-                            </font>
-                        </Label>
-                    </VBox>
-
-                    <VBox id="pageContent">
-                        <Label text="Wildlife Resources">
-                        <font>
-                            <Font name="System Bold"
-                                  size="12.0" />
-                        </font>
-                        </Label>
-                    </VBox>
-                </VBox>
-            </HBox>
+            <Label text="Welp" style="-fx-font-size: 28px; -fx-font-weight: bold;" />
+            <Label text="The page your looking for isn't implemented yet. Please go to a different page." />
         </VBox>
     </GridPane>
 </VBox>
