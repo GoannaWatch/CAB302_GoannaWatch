@@ -35,29 +35,28 @@ public class SqliteAccountDAO implements IAccountDAO{
         }
     }
 
+    // Updates account details without changing the password.
     @Override
     public void updateAccount(Account account) {
         String sql = """
-                UPDATE accounts
-                SET first_name = ?, last_name = ?, email = ?, password = ?
-                WHERE id = ?
-                """;
+            UPDATE accounts
+            SET first_name = ?, last_name = ?, email = ?
+            WHERE id = ?
+            """;
 
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)){
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, account.getFirstName());
             statement.setString(2, account.getLastName());
             statement.setString(3, account.getEmail());
-
-            String hash = PasswordUtils.hashPassword(account.getPassword());
-            statement.setString(4, hash);
-
-            statement.setInt(5, account.getId());
+            statement.setInt(4, account.getId());
 
             statement.executeUpdate();
+
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to update account: " + e.getMessage());
+            throw new RuntimeException("Failed to update account: "
+                    + e.getMessage(), e);
         }
     }
 

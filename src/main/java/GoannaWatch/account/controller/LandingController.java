@@ -132,4 +132,14 @@ public class LandingController {
 
     public void onProfileButtonClick() {
     }
+
+    // Open the current user's profile.
+    @FXML
+    private void onProfileButtonClick() throws IOException {
+        Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(
+                App.class.getResource("profile.fxml")
+        );
+        stage.setScene(new Scene(loader.load()));
+    }
 }
