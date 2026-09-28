@@ -130,8 +130,6 @@ public class LandingController {
     //    stage.setScene(scene);
     }
 
-    public void onProfileButtonClick() {
-    }
 
     // Open the current user's profile.
     @FXML
