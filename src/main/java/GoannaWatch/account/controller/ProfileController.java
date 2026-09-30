@@ -67,6 +67,9 @@ public class ProfileController {
             );
             updatedAccount.setId(currentAccount.getId());
 
+            // Keeps the current role when saving the profile.
+            updatedAccount.setRole(currentAccount.getRole());
+
             Account existingAccount = accountDAO.getAccountByEmail(
                     updatedAccount.getEmail()
             );

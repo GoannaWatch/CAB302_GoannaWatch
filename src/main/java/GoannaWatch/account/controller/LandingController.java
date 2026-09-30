@@ -52,7 +52,10 @@ public class LandingController {
 
         if (current != null) {
             welcomeLabel.setText("Welcome, " + current.getFullName() + "!");
-            emailLabel.setText(current.getEmail());
+
+            // Displays the account role next to the email.
+            String role = current.isExpert() ? "Expert" : "User";
+            emailLabel.setText("[" + role + "] " + current.getEmail());
         }
 
         updateThemeButtonText();

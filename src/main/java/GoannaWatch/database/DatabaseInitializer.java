@@ -11,7 +11,7 @@ import java.sql.Statement;
  */
 public class DatabaseInitializer {
 
-    private static final int CURRENT_DATABASE_VERSION = 2;
+    private static final int CURRENT_DATABASE_VERSION = 3;
 
     /**
      * Creates the database tables and applies any required migrations.
@@ -45,6 +45,16 @@ public class DatabaseInitializer {
                     migrateToVersion2(connection);
                     setDatabaseVersion(connection, 2);
                     version = 2;
+                }
+
+                /*
+                Version 3:
+                Add user and expert roles to accounts.
+                 */
+                if (version < 3) {
+                    migrateToVersion3(connection);
+                    setDatabaseVersion(connection, 3);
+                    version = 3;
                 }
 
                 /*
@@ -171,6 +181,26 @@ public class DatabaseInitializer {
             String sql = """
                     ALTER TABLE observations
                     ADD COLUMN is_endangered TEXT NOT NULL DEFAULT 'No'
+                    """;
+
+            try (Statement statement = connection.createStatement()) {
+                statement.executeUpdate(sql);
+            }
+        }
+    }
+
+    /**
+     * Version 3 of the database.
+     * Adds the role column to accounts if it is not already present.
+     * Existing accounts receive the user role by default.
+     */
+    private static void migrateToVersion3(Connection connection)
+            throws SQLException {
+
+        if (!columnExists(connection, "accounts", "role")) {
+            String sql = """
+                    ALTER TABLE accounts
+                    ADD COLUMN role TEXT NOT NULL DEFAULT 'user'
                     """;
 
             try (Statement statement = connection.createStatement()) {

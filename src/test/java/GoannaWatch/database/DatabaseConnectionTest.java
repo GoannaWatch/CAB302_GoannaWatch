@@ -152,6 +152,17 @@ public class DatabaseConnectionTest {
                             REFERENCES accounts(id)
                     )
                     """);
+
+                /*
+                Add an account before migration to check that its data is preserved.
+                The password value is only a test placeholder, not used for login.
+                */
+                statement.executeUpdate("""
+                        INSERT INTO accounts
+                        (id, first_name, last_name, email, password)
+                        VALUES (1, 'Min', 'Test', 'min@example.com', 'test-placeholder')
+                        """);
+
             }
 
             // Run the current database initialization/migration code.
@@ -227,9 +238,9 @@ public class DatabaseConnectionTest {
                 );
 
                 assertEquals(
-                        2,
+                        3,
                         result.getInt("version"),
-                        "Database should be migrated to schema version 2"
+                        "Database should be migrated to schema version 3"
                 );
             }
 
