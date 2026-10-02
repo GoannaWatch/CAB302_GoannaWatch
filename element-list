@@ -1,0 +1,6 @@
+module:GoannaWatch
+GoannaWatch
+GoannaWatch.account.controller
+GoannaWatch.account.model
+GoannaWatch.observations.controller
+GoannaWatch.observations.model
