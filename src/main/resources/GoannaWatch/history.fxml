@@ -8,6 +8,7 @@
 
 <?import javafx.scene.text.Font?>
 <VBox xmlns="http://javafx.com/javafx"
+      id="contentContainer"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="GoannaWatch.observations.controller.HistoryController"
       stylesheets="@pageStyling.css"

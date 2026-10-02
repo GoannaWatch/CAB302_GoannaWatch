@@ -8,10 +8,11 @@
 
 <?import javafx.scene.text.Font?>
 <VBox xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            stylesheets="@pageStyling.css"
-            fx:controller="GoannaWatch.observations.controller.MapController"
-            prefHeight="800" prefWidth="800">
+      id="contentContainer"
+      xmlns:fx="http://javafx.com/fxml"
+      stylesheets="@pageStyling.css"
+      fx:controller="GoannaWatch.observations.controller.MapController"
+      prefHeight="800" prefWidth="800">
     <AnchorPane id="pageContent"
                 prefHeight="109.0"
                 prefWidth="603.0">
