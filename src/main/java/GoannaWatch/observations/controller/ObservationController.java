@@ -15,12 +15,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import javax.swing.*;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.function.Predicate;
 
 /**
  * The controller class for the Observation view of the GoannaWatch application. This class handles the user interactions in the Observation view.
@@ -28,12 +26,6 @@ import java.util.function.Predicate;
 public class ObservationController {
 
     private final SqliteObservationDAO observationDAO;
-
-    @FXML
-    private ComboBox<String> habitatComboBox = new ComboBox<String>();
-
-    @FXML
-    private ComboBox<String> speciesComboBox = new ComboBox<String>();
 
     @FXML
     private TableView<Observation> observationsTableView;
@@ -73,6 +65,12 @@ public class ObservationController {
 
     @FXML
     private TextField searchTextField;
+
+    @FXML
+    private ComboBox<String> habitatComboBox;
+
+    @FXML
+    private ComboBox<String> speciesComboBox;
 
     private final ObservableList<Observation> masterObservations = FXCollections.observableArrayList();
 
