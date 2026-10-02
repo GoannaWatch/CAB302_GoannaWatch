@@ -107,7 +107,6 @@
                     <reportOutputDirectory>${project.build.directory}/docs</reportOutputDirectory>
                 </configuration>
             </plugin>
-
             <!-- Run JUnit 5 tests with Maven. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
