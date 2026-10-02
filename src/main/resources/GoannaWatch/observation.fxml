@@ -15,6 +15,7 @@
 <?import javafx.scene.control.TableView?>
 
 <?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.ComboBox?>
 <VBox spacing="20.0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="GoannaWatch.observations.controller.ObservationController">
     <padding>
@@ -51,13 +52,12 @@
                 <Label text="Endangered:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                 <Label text="Date: " GridPane.columnIndex="0" GridPane.rowIndex="3"/>
 
-                <TextField fx:id="locationTextField"
-                           GridPane.columnIndex="1"
-                           GridPane.rowIndex="0"/>
-                <TextField fx:id="animalTextField"
-                           GridPane.columnIndex="1"
-                           GridPane.rowIndex="1"/>
-
+                <ComboBox fx:id="habitatComboBox"
+                          GridPane.columnIndex="1"
+                          GridPane.rowIndex="0"/>
+                <ComboBox fx:id="speciesComboBox"
+                          GridPane.columnIndex="1"
+                          GridPane.rowIndex="1"/>
                 <fx:define>
                     <ToggleGroup fx:id="isEndangered" />
                 </fx:define>

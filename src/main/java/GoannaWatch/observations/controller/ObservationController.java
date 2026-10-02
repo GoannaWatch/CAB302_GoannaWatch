@@ -2,9 +2,10 @@ package GoannaWatch.observations.controller;
 
 import GoannaWatch.App;
 import GoannaWatch.account.model.*;
-import GoannaWatch.observations.model.SqliteObservationDAO;
+import GoannaWatch.observations.model.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -14,15 +15,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import GoannaWatch.observations.model.IObservationDAO;
-import GoannaWatch.observations.model.MockObservationDAO;
-import GoannaWatch.observations.model.Observation;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.InputMismatchException;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * The controller class for the Observation view of the GoannaWatch application. This class handles the user interactions in the Observation view.
@@ -30,6 +28,12 @@ import java.util.List;
 public class ObservationController {
 
     private final SqliteObservationDAO observationDAO;
+
+    @FXML
+    private ComboBox<String> habitatComboBox = new ComboBox<String>();
+
+    @FXML
+    private ComboBox<String> speciesComboBox = new ComboBox<String>();
 
     @FXML
     private TableView<Observation> observationsTableView;
@@ -51,12 +55,6 @@ public class ObservationController {
 
     @FXML
     private CheckBox showMineOnlyCheck;
-
-    @FXML
-    private TextField locationTextField;
-
-    @FXML
-    private TextField animalTextField;
 
     @FXML
     private RadioButton endangeredYesRadio;
@@ -103,8 +101,8 @@ public class ObservationController {
 
         observationContainer.setVisible(true);
 
-        locationTextField.setText(observation.getLocation());
-        animalTextField.setText(observation.getAnimalSeen());
+        habitatComboBox.setValue(observation.getLocation());
+        speciesComboBox.setValue(observation.getAnimalSeen());
 
         if ("Yes".equalsIgnoreCase(observation.getIsEndangered())) {
             endangeredYesRadio.setSelected(true);
@@ -145,8 +143,14 @@ public class ObservationController {
                 (obs, oldSelection, newSelection) -> selectObservation(newSelection));
 
         loadObservationsFromDao();
-
-
+        updateHabitatComboBox();
+        updateSpeciesComboBox();
+        habitatComboBox.setEditable(true);
+        speciesComboBox.setEditable(true);
+        observationsTableView.getItems().addListener((ListChangeListener<Observation>) change -> {
+            updateHabitatComboBox();
+            updateSpeciesComboBox();
+        });
         observationsTableView.getSelectionModel().selectFirst();
     }
 
@@ -211,8 +215,8 @@ public class ObservationController {
             return;
         }
         try {
-            selected.setLocation(locationTextField.getText());
-            selected.setAnimalSeen(animalTextField.getText());
+            selected.setLocation(habitatComboBox.getValue());
+            selected.setAnimalSeen(speciesComboBox.getValue());
 
             RadioButton selectedEndangered = (RadioButton) isEndangered.getSelectedToggle();
 
@@ -253,7 +257,7 @@ public class ObservationController {
             return;
         }
 
-        final String DEFAULT_LOCATION = "New Location";
+        final String DEFAULT_LOCATION = "Unknown";
         final String DEFAULT_ANIMAL = "Unknown";
         final String DEFAULT_STATUS = "No";
         final LocalDate DEFAULT_DATE = LocalDate.now();
@@ -263,7 +267,7 @@ public class ObservationController {
         loadObservationsFromDao();
 
         observationsTableView.getSelectionModel().select(newObservation);
-        locationTextField.requestFocus();
+        habitatComboBox.requestFocus();
     }
 
     /**
@@ -298,5 +302,27 @@ public class ObservationController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    /**
+     * Updates habitat combo box to include all habitats previously inputted
+     */
+    private void updateHabitatComboBox(){
+        habitatComboBox.getItems().setAll(); // empty list
+        String[] habitatsList = observationsTableView.getItems().stream().map(Observation::getLocation).distinct().toArray(String[]::new);
+        habitatComboBox.getItems().addAll(habitatsList); // add the current distinct locations from the table
+        habitatComboBox.getItems().removeAll("Unknown");
+        habitatComboBox.getItems().addFirst("Unknown"); // since unknown can be a value in the table, but is also a default value given in the combobox, we reset it here to prevent duplicates
+    }
+
+    /**
+     * Updates species combo box to include all species previously inputted
+     */
+    private void updateSpeciesComboBox(){
+        speciesComboBox.getItems().setAll(); // empty list
+        String[] habitatsList = observationsTableView.getItems().stream().map(Observation::getAnimalSeen).distinct().toArray(String[]::new);
+        speciesComboBox.getItems().addAll(habitatsList); // add the current distinct locations from the table
+        speciesComboBox.getItems().removeAll("Unknown");
+        speciesComboBox.getItems().addFirst("Unknown"); // since unknown can be a value in the table, but is also a default value given in the combobox, we reset it here to prevent duplicates
     }
 }
