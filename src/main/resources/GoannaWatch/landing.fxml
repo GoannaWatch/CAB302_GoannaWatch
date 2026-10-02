@@ -103,6 +103,11 @@
                         text="History"
                         ButtonBar.buttonUniformSize="true" />
 
+                <Button fx:id="endangeredButton"
+                        onAction="#onEndangeredButtonClick"
+                        text="Endangered Species"
+                        ButtonBar.buttonUniformSize="true" />
+
                 <Button fx:id="newObservationButton"
                         onAction="#onNewObservationButtonClick"
                         text="New Observation"

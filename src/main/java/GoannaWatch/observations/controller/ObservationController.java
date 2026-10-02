@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The controller class for the Observation view of the GoannaWatch application. This class handles the user interactions in the Observation view.
