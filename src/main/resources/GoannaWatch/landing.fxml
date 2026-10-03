@@ -108,6 +108,13 @@
                         text="New Observation"
                         ButtonBar.buttonUniformSize="true" />
 
+                <Button fx:id="usersButton"
+                        onAction="#onUsersButtonClick"
+                        text="Manage Users"
+                        visible="false"
+                        managed="false"
+                        ButtonBar.buttonUniformSize="true" />
+
             </buttons>
         </ButtonBar>
     </HBox>
