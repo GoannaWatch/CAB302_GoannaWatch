@@ -2,7 +2,7 @@ package GoannaWatch.observations.controller;
 
 import GoannaWatch.App;
 import GoannaWatch.account.model.*;
-import GoannaWatch.observations.model.SqliteObservationDAO;
+import GoannaWatch.observations.model.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,9 +14,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import GoannaWatch.observations.model.IObservationDAO;
-import GoannaWatch.observations.model.MockObservationDAO;
-import GoannaWatch.observations.model.Observation;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -30,6 +27,8 @@ import java.util.List;
 public class ObservationController {
 
     private final SqliteObservationDAO observationDAO;
+
+    private LocationAutocomplete locationAutocomplete;
 
     @FXML
     private TableView<Observation> observationsTableView;
@@ -103,7 +102,12 @@ public class ObservationController {
 
         observationContainer.setVisible(true);
 
-        locationTextField.setText(observation.getLocation());
+        if (observation.hasCoordinates()) {
+            locationAutocomplete.setPlace(new Place(
+                    observation.getLocation(), observation.getLatitude(), observation.getLongitude()));
+        } else {
+            locationAutocomplete.setText(observation.getLocation()); // legacy row: user must re-pick
+        }
         animalTextField.setText(observation.getAnimalSeen());
 
         if ("Yes".equalsIgnoreCase(observation.getIsEndangered())) {
@@ -130,6 +134,8 @@ public class ObservationController {
                 new SimpleStringProperty(cellData.getValue().getIsEndangered()));
         dateColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getObservedAt().toString()));
+
+        locationAutocomplete = new LocationAutocomplete(locationTextField, new PlacesService());
 
         filteredObservations = new FilteredList<>(masterObservations, o -> true);
         sortedObservations = new SortedList<>(filteredObservations);
@@ -211,7 +217,12 @@ public class ObservationController {
             return;
         }
         try {
-            selected.setLocation(locationTextField.getText());
+            Place place = locationAutocomplete.getSelectedPlace().orElse(null);
+            if (place == null) {
+                showAlert("Please choose a location from the suggestions.");
+                return;
+            }
+            selected.setPlace(place);
             selected.setAnimalSeen(animalTextField.getText());
 
             RadioButton selectedEndangered = (RadioButton) isEndangered.getSelectedToggle();
@@ -223,7 +234,9 @@ public class ObservationController {
             selected.setObservedAt(datePicker.getValue());
 
             observationDAO.updateObservation(selected);
+            int id = selected.getId();
             loadObservationsFromDao();
+            selectById(id);
 
         } catch (InputMismatchException e) {
             showAlert(e.getMessage());
@@ -258,12 +271,23 @@ public class ObservationController {
         final String DEFAULT_STATUS = "No";
         final LocalDate DEFAULT_DATE = LocalDate.now();
 
-        Observation newObservation = new Observation(currentAccount, DEFAULT_LOCATION, DEFAULT_ANIMAL, DEFAULT_STATUS, DEFAULT_DATE);
+        Observation newObservation = new Observation(currentAccount, DEFAULT_LOCATION, null, null, DEFAULT_ANIMAL, DEFAULT_STATUS, DEFAULT_DATE);
         observationDAO.addObservation(newObservation);
         loadObservationsFromDao();
-
-        observationsTableView.getSelectionModel().select(newObservation);
+        selectById(newObservation.getId());
         locationTextField.requestFocus();
+    }
+
+    /**
+     * Selects the table row for the observation with the given ID.
+     * Fixes reload from Sqlite changing the selected row on refresh by creating a reference.
+     * @param id the database ID of the observation to select
+     */
+    private void selectById(int id) {
+        sortedObservations.stream()
+                .filter(o -> o.getId() == id)
+                .findFirst()
+                .ifPresent(o -> observationsTableView.getSelectionModel().select(o));
     }
 
     /**

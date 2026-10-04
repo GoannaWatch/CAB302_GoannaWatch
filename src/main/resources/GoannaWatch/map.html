@@ -1,10 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <style>
+        html, body, #map { height: 100%; margin: 0; padding: 0; }
+    </style>
 </head>
 <body>
-$END$
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    window.onerror = (msg, src, line) => alert("JS error: " + msg + " (line " + line + ")");
+
+    // Map starts centred on Brisbane
+    const map = L.map("map").setView([-27.4698, 153.0251], 11);
+
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
+
+    function addObservation(animal, location, observer, date, lat, lng) {
+        const marker = L.marker([lat, lng]).addTo(map);
+
+        const div = document.createElement("div");
+        const title = document.createElement("strong");
+        title.textContent = animal;
+        div.appendChild(title);
+        [location, "Seen by " + observer, date].forEach(text => {
+            div.appendChild(document.createElement("br"));
+            div.appendChild(document.createTextNode(text));
+        });
+        marker.bindPopup(div);
+    }
+</script>
 </body>
 </html>

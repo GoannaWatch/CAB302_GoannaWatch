@@ -43,3 +43,4 @@ goannawatch.db
 goannawatch.db-journal
 goannawatch.db-wal
 goannawatch.db-shm
+/config.properties

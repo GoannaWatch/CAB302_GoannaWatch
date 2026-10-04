@@ -5,6 +5,7 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
 
 <?import javafx.scene.text.Font?>
 <VBox xmlns="http://javafx.com/javafx"
@@ -107,6 +108,7 @@
 
         <VBox alignment="TOP_CENTER">
             <Label text="Welp" style="-fx-font-size: 28px; -fx-font-weight: bold;" />
+            <WebView fx:id="mapWebView" VBox.vgrow="ALWAYS" />
             <Label text="The page your looking for isn't implemented yet. Please go to a different page." />
         </VBox>
     </GridPane>

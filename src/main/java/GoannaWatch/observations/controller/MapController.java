@@ -3,14 +3,11 @@ package GoannaWatch.observations.controller;
 import GoannaWatch.App;
 import GoannaWatch.account.model.Account;
 import GoannaWatch.account.model.Session;
-import GoannaWatch.config.ApiConfig;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -21,13 +18,13 @@ import javafx.scene.web.WebView;
 import GoannaWatch.observations.model.IObservationDAO;
 import GoannaWatch.observations.model.Observation;
 import GoannaWatch.observations.model.SqliteObservationDAO;
-
+import netscape.javascript.JSObject;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Properties;
 
+/**
+ * Controller for the map view of the application.
+ */
 public class MapController {
 
     @FXML
@@ -48,6 +45,9 @@ public class MapController {
     @FXML
     private Hyperlink themeButton;
 
+    /**
+     * Embedded browser displaying Leaflet map.
+     */
     @FXML
     private WebView mapWebView;
 
@@ -57,7 +57,7 @@ public class MapController {
      * Initialises the controller class. This method is automatically called after the fxml file has been loaded.
      */
     @FXML
-    public void initialize(){
+    public void initialize() {
         Account current = Session.getCurrentAccount();
         updateThemeButtonText();
         loadMap();
@@ -85,6 +85,7 @@ public class MapController {
 
     /**
      * Handles the action of clicking the logout button. Loads the Welcome page view of the application.
+     *
      * @throws IOException If the .fxml file for the welcome view isn't found.
      */
     @FXML
@@ -98,6 +99,7 @@ public class MapController {
 
     /**
      * Handles the action of clicking the "Record an Observation" button. Loads the Observation view of the application.
+     *
      * @throws IOException If the .fxml file for the observation view isn't found.
      */
     @FXML
@@ -120,10 +122,10 @@ public class MapController {
     @FXML
     //TODO create Map page
     protected void onMapButtonClick() throws IOException {
-    //    Stage stage = (Stage) mapButton.getScene().getWindow();
-    //    FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("map.fxml"));
-    //    Scene scene = new Scene(fxmlLoader.load());
-    //    stage.setScene(scene);
+        //    Stage stage = (Stage) mapButton.getScene().getWindow();
+        //    FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("map.fxml"));
+        //    Scene scene = new Scene(fxmlLoader.load());
+        //    stage.setScene(scene);
     }
 
     @FXML
@@ -139,8 +141,7 @@ public class MapController {
     }
 
     /**
-     * Loads map.html into the WebView, injecting the API key, then drops a pin
-     * for every observation once the page has loaded.
+     * Loads map.html into the WebView, and adds a pin for every observation with coords.
      */
     private void loadMap() {
         try (InputStream in = App.class.getResourceAsStream("map.html")) {
@@ -161,33 +162,25 @@ public class MapController {
     }
 
     /**
+     * Adds a pin to the map for  each stored observation.
+     * Observations without coords are skipped.
      *
-     * @param engine
+     * @param engine the web engine displaying the loaded page.
      */
     private void addObservationPins(WebEngine engine) {
+        JSObject window = (JSObject) engine.executeScript("window");
+
         for (Observation o : observationDAO.getAllObservations()) {
             if (!o.hasCoordinates()) {
                 continue;
             }
-            engine.executeScript("addObservation(" + toJson(o) + ")");
+            window.call("addObservation",
+                    o.getAnimalSeen(),
+                    o.getLocation(),
+                    o.getObserver().getFullName(),
+                    o.getObservedAt().toString(),
+                    o.getLatitude(),
+                    o.getLongitude());
         }
-    }
-
-    private String toJson(Observation o) {
-        return "{\"animal\":" + jsString(o.getAnimalSeen())
-                + ",\"location\":" + jsString(o.getLocation())
-                + ",\"observer\":" + jsString(o.getObserver().getFullName())
-                + ",\"date\":" + jsString(o.getObservedAt().toString())
-                + ",\"lat\":" + o.getLatitude()
-                + ",\"lng\":" + o.getLongitude() + "}";
-    }
-
-    /** Wraps text as a safely escaped JavaScript string literal. */
-    private String jsString(String s) {
-        return "\"" + s.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "")
-                .replace("<", "\\u003c") + "\"";
     }
 }

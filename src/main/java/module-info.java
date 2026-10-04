@@ -11,6 +11,10 @@ module GoannaWatch {
     requires org.apache.commons.validator;
     requires atlantafx.base;
     requires password4j;
+    requires javafx.web;
+    requires java.net.http;
+    requires org.json;
+    requires jdk.jsobject;
 
 
     opens GoannaWatch to javafx.fxml;
