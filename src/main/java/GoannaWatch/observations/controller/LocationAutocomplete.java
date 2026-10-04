@@ -15,9 +15,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Adds place autocomplete to a TextField. As the user types, matching places are
- * fetched (debounced, off the FX thread) and shown in a dropdown. Choosing one
- * records it as the selected Place; typing again invalidates that selection.
+ * Adds place autocomplete to a TextField.
  */
 public class LocationAutocomplete {
 
@@ -25,13 +23,32 @@ public class LocationAutocomplete {
     private static final int MAX_SUGGESTIONS = 5;
 
     private final TextField textField;
+
+
     private final PlacesService placesService;
     private final ContextMenu suggestionMenu = new ContextMenu();
+
+    /**
+     * Time delay for lookup until user has paused typing.
+     */
     private final PauseTransition debounce = new PauseTransition(Duration.millis(400));
 
+    /**
+     * The place the user selected from suggestions, or null.
+     */
     private Place selectedPlace;
+
+    /**
+     * Is set to true when the class is updating the field's text itself.
+     * Means that the listener can differentiate from user typing.
+     */
     private boolean updatingProgrammatically = false;
 
+    /**
+     * Constructor for LocationAutocomplete.
+     * @param textField the field the user types a location into.
+     * @param placesService the service used to lookup matching places.
+     */
     public LocationAutocomplete(TextField textField, PlacesService placesService) {
         this.textField = textField;
         this.placesService = placesService;
@@ -44,27 +61,31 @@ public class LocationAutocomplete {
         });
     }
 
-    /** @return the place the user picked from the suggestions, if any */
     public Optional<Place> getSelectedPlace() {
         return Optional.ofNullable(selectedPlace);
     }
 
-    /** Shows an already-resolved place (e.g. when loading a saved observation) without searching. */
     public void setPlace(Place place) {
         setTextQuietly(place.getName());
         selectedPlace = place;
     }
 
-    /** Shows plain text with no resolved place, e.g. a legacy location the user must re-pick. */
     public void setText(String text) {
         setTextQuietly(text);
         selectedPlace = null;
     }
 
+    /**
+     * Empties the text field.
+     */
     public void clear() {
         setText("");
     }
 
+    /**
+     * Sets field's text without starting a lookup.
+     * @param text The text to be entered.
+     */
     private void setTextQuietly(String text) {
         debounce.stop();
         suggestionMenu.hide();
@@ -76,11 +97,16 @@ public class LocationAutocomplete {
         }
     }
 
+    /**
+     * Handles when a user edits the text field.
+     * Invalidates current selected place, hides dropdown, and restarts debounce timer.
+     * @param text The new text in the field.
+     */
     private void onTextChanged(String text) {
         if (updatingProgrammatically) {
             return;
         }
-        selectedPlace = null; // the user edited the text, so any earlier pick no longer matches it
+        selectedPlace = null;
 
         String query = text == null ? "" : text.trim();
         if (query.length() < MIN_QUERY_LENGTH) {
@@ -92,6 +118,11 @@ public class LocationAutocomplete {
         debounce.playFromStart();
     }
 
+    /**
+     * Looks up places match query.
+     * Response is dropped if field loses focus or text has changed.
+     * @param query the text to search for
+     */
     private void fetchSuggestions(String query) {
         CompletableFuture.supplyAsync(() -> {
             try {
@@ -109,6 +140,10 @@ public class LocationAutocomplete {
         }));
     }
 
+    /**
+     * Fills dropdown with fetched places.
+     * @param results the suggested places
+     */
     private void showSuggestions(List<Place> results) {
         suggestionMenu.getItems().clear();
         if (results.isEmpty()) {
