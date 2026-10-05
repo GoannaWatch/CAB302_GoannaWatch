@@ -104,7 +104,7 @@ class MockObservationDAOTest {
 
         dao.addObservation(observation);
 
-        observation.setLocation("Gold Coast");
+        observation.setPlace(new Place("Gold Coast", -27.977, 153.38));
         observation.setAnimalSeen("Koala");
 
         dao.updateObservation(observation);
@@ -113,6 +113,8 @@ class MockObservationDAOTest {
 
         assertNotNull(updatedObservation);
         assertEquals("Gold Coast", updatedObservation.getLocation());
+        assertEquals(-27.977, updatedObservation.getLatitude());
+        assertEquals(153.38, updatedObservation.getLongitude());
         assertEquals("Koala", updatedObservation.getAnimalSeen());
     }
 

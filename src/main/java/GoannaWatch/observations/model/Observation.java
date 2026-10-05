@@ -38,6 +38,20 @@ public class Observation {
     }
 
     /**
+     * Constructs a new Observation without resolved map coordinates.
+     *
+     * @param observer      The account recording the observation.
+     * @param location      The location of the observation.
+     * @param animalSeen    The animal observed.
+     * @param isEndangered  The endangerment status of the animal observed.
+     * @param observedAt    The date of the observation
+     */
+    public Observation (Account observer, String location, String animalSeen,
+                        String isEndangered, LocalDate observedAt) {
+        this(observer, location, null, null, animalSeen, isEndangered, observedAt);
+    }
+
+    /**
      * Returns the ID of the observation.
      *
      * @return The ID of the observation.

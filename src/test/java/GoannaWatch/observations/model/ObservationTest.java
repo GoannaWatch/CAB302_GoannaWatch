@@ -137,9 +137,12 @@ class ObservationTest {
                 LocalDate.of(2026, 9, 16)
         );
 
-        observation.setLocation("Gold Coast");
+        observation.setPlace(new Place("Gold Coast", -27.977, 153.38));
 
         assertEquals("Gold Coast", observation.getLocation());
+        assertEquals(-27.977, observation.getLatitude());
+        assertEquals(153.38, observation.getLongitude());
+        assertTrue(observation.hasCoordinates());
     }
 
     @Test
