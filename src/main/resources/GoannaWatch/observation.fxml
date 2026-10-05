@@ -19,21 +19,46 @@
 <VBox spacing="20.0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="GoannaWatch.observations.controller.ObservationController">
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+        <Insets bottom="20.0"
+                left="20.0"
+                right="20.0"
+                top="20.0"/>
+
     </padding>
-    <Label text="Record an Observation" id="pageTitle" wrapText="true"/>
+    <Label text="Record an Observation"
+           id="pageTitle"
+           wrapText="true"/>
+
     <Label text="Select observation or create a new one" wrapText="true"/>
     <HBox VBox.vgrow="ALWAYS" spacing="20.0">
         <VBox spacing="10.0">
-            <CheckBox fx:id="showMineOnlyCheck" text = "Show only my observations" onAction="#onFilterChanged"/>
-            <TextField fx:id="searchTextField" promptText="Search by animal or location..."/>
-            <TableView fx:id="observationsTableView" VBox.vgrow="ALWAYS">
+            <CheckBox fx:id="showMineOnlyCheck"
+                      text="Show only my observations"
+                      onAction="#onFilterChanged"/>
+            <TextField fx:id="searchTextField"
+                       promptText="Search by animal or location..."/>
+            <TableView fx:id="observationsTableView"
+                       VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="observerColumn" text="Observer" prefWidth="130.0"/>
-                    <TableColumn fx:id="locationColumn" text="Location" prefWidth="130.0"/>
-                    <TableColumn fx:id="animalColumn" text="Animal" prefWidth="130.0"/>
-                    <TableColumn fx:id="endangerColumn" text="Endangered" prefWidth="130.0"/>
-                    <TableColumn fx:id="dateColumn" text="Date" prefWidth="130.0"/>
+                    <TableColumn fx:id="observerColumn"
+                                 text="Observer"
+                                 prefWidth="130.0"/>
+
+                    <TableColumn fx:id="locationColumn"
+                                 text="Location"
+                                 prefWidth="130.0"/>
+
+                    <TableColumn fx:id="animalColumn"
+                                 text="Animal"
+                                 prefWidth="130.0"/>
+
+                    <TableColumn fx:id="endangerColumn"
+                                 text="Endangered"
+                                 prefWidth="130.0"/>
+
+                    <TableColumn fx:id="dateColumn"
+                                 text="Date"
+                                 prefWidth="130.0"/>
                 </columns>
             </TableView>
             <HBox spacing="10.0">
@@ -52,9 +77,10 @@
                 <Label text="Endangered:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                 <Label text="Date: " GridPane.columnIndex="0" GridPane.rowIndex="3"/>
 
-                <ComboBox fx:id="habitatComboBox"
-                          GridPane.columnIndex="1"
-                          GridPane.rowIndex="0"/>
+                <TextField fx:id="locationTextField"
+                           GridPane.columnIndex="1"
+                           GridPane.rowIndex="0"/>
+
                 <ComboBox fx:id="speciesComboBox"
                           GridPane.columnIndex="1"
                           GridPane.rowIndex="1"/>
