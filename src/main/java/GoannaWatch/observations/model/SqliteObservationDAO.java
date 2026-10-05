@@ -29,8 +29,8 @@ public class SqliteObservationDAO implements IObservationDAO{
     public void addObservation(Observation observation) {
         String sql = """
                 INSERT INTO observations
-                (observer_id, location, animal_seen, is_endangered, observed_at)
-                VALUES (?, ?, ?, ?, ?)
+                (observer_id, location, animal_seen, is_endangered, observed_at, is_favourite)
+                VALUES (?, ?, ?, ?, ?, ?)
                 """;
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -42,6 +42,7 @@ public class SqliteObservationDAO implements IObservationDAO{
             statement.setString(3, observation.getAnimalSeen());
             statement.setString(4, observation.getIsEndangered());
             statement.setString(5, observation.getObservedAt().toString());
+            statement.setBoolean(6, observation.getIsFavourite());
 
             statement.executeUpdate();
 
@@ -84,7 +85,8 @@ public class SqliteObservationDAO implements IObservationDAO{
                             result.getString("location"),
                             result.getString("animal_seen"),
                             result.getString("is_endangered"),
-                            LocalDate.parse(result.getString("observed_at"))
+                            LocalDate.parse(result.getString("observed_at")),
+                            result.getBoolean("is_favourite")
                     );
 
                     observation.setId(result.getInt("id"));
@@ -103,7 +105,7 @@ public class SqliteObservationDAO implements IObservationDAO{
     public void updateObservation(Observation observation) {
         String sql = """
                 UPDATE observations
-                SET location = ?, animal_seen = ?, is_endangered = ?, observed_at = ?
+                SET location = ?, animal_seen = ?, is_endangered = ?, observed_at = ?, is_favourite = ?
                 WHERE id = ?
                 """;
 
@@ -114,7 +116,8 @@ public class SqliteObservationDAO implements IObservationDAO{
             statement.setString(2, observation.getAnimalSeen());
             statement.setString(3, observation.getIsEndangered());
             statement.setString(4, observation.getObservedAt().toString());
-            statement.setInt(5, observation.getId());
+            statement.setBoolean(5, observation.getIsFavourite());
+            statement.setInt(6, observation.getId());
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -157,7 +160,8 @@ public class SqliteObservationDAO implements IObservationDAO{
                                 + observation.getLocation() + " | "
                                 + observation.getAnimalSeen() + " | "
                                 + observation.getIsEndangered() + " | "
-                                + observation.getObservedAt()
+                                + observation.getObservedAt() + " | "
+                                + observation.getIsFavourite()
                 );
             }
         } catch (SQLException e) {
@@ -192,7 +196,8 @@ public class SqliteObservationDAO implements IObservationDAO{
                         result.getString("location"),
                         result.getString("animal_seen"),
                         result.getString("is_endangered"),
-                        LocalDate.parse(result.getString("observed_at"))
+                        LocalDate.parse(result.getString("observed_at")),
+                        result.getBoolean("is_favourite")
                 );
 
                 observation.setId(result.getInt("id"));
@@ -235,7 +240,8 @@ public class SqliteObservationDAO implements IObservationDAO{
                             result.getString("location"),
                             result.getString("animal_seen"),
                             result.getString("is_endangered"),
-                            LocalDate.parse(result.getString("observed_at"))
+                            LocalDate.parse(result.getString("observed_at")),
+                            result.getBoolean("is_favourite")
                     );
 
                     observation.setId(result.getInt("id"));

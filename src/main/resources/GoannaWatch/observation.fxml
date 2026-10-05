@@ -33,6 +33,7 @@
                     <TableColumn fx:id="animalColumn" text="Animal" prefWidth="130.0"/>
                     <TableColumn fx:id="endangerColumn" text="Endangered" prefWidth="130.0"/>
                     <TableColumn fx:id="dateColumn" text="Date" prefWidth="130.0"/>
+                    <TableColumn fx:id="favouriteColumn" text="Favourite" prefWidth="130.0"/>
                 </columns>
             </TableView>
             <HBox spacing="10.0">
@@ -79,6 +80,39 @@
                 <DatePicker fx:id="datePicker"
                             GridPane.columnIndex="1"
                             GridPane.rowIndex="3"/>
+
+                <Label text="Image: "
+                       GridPane.columnIndex="0"
+                       GridPane.rowIndex="4"/>
+
+                <HBox spacing="10"
+                      GridPane.columnIndex="1"
+                      GridPane.rowIndex="4">
+
+                    <Button text="Choose Image"
+                            onAction="#onChooseImage"/>
+
+                    <Label fx:id="imageLabel"
+                           text="No image selected"
+                           wrapText="true"/>
+                </HBox>
+
+
+                <Label text="Video: "
+                       GridPane.columnIndex="0"
+                       GridPane.rowIndex="5"/>
+
+                <HBox spacing="10"
+                      GridPane.columnIndex="1"
+                      GridPane.rowIndex="5">
+
+                    <Button text="Choose Video"
+                            onAction="#onChooseVideo"/>
+
+                    <Label fx:id="videoLabel"
+                           text="No video selected"
+                           wrapText="true"/>
+                </HBox>
             </GridPane>
 
             <HBox spacing="10.0" alignment="CENTER">

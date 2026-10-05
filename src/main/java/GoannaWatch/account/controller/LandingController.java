@@ -35,6 +35,9 @@ public class LandingController {
     private Button endangeredButton;
 
     @FXML
+    private Button favouritesButton;
+
+    @FXML
     private Button historyButton;
 
     @FXML
@@ -119,6 +122,14 @@ public class LandingController {
     protected void onEndangeredButtonClick() throws IOException {
         Stage stage = (Stage) endangeredButton.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("endangered.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setScene(scene);
+    }
+
+    @FXML
+    protected void onFavouritesButtonClick() throws IOException {
+        Stage stage = (Stage) favouritesButton.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("favourites.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
     }

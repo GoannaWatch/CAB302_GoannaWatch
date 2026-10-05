@@ -108,6 +108,11 @@
                         text="Endangered Species"
                         ButtonBar.buttonUniformSize="true" />
 
+                <Button fx:id="favouritesButton"
+                        onAction="#onFavouritesButtonClick"
+                        text="Favourites"
+                        ButtonBar.buttonUniformSize="true" />
+
                 <Button fx:id="newObservationButton"
                         onAction="#onNewObservationButtonClick"
                         text="New Observation"

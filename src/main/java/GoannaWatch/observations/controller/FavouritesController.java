@@ -2,7 +2,6 @@ package GoannaWatch.observations.controller;
 
 import GoannaWatch.observations.model.Observation;
 import GoannaWatch.observations.model.SqliteObservationDAO;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,12 +9,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
-public class EndangeredController {
+public class FavouritesController {
 
     private final SqliteObservationDAO observationDAO;
 
     @FXML
-    private TableView<Observation> endangeredTableView;
+    private TableView<Observation> favouritesTableView;
 
     @FXML
     private TableColumn<Observation, String> observerColumn;
@@ -29,13 +28,13 @@ public class EndangeredController {
     @FXML
     private TableColumn<Observation, String> dateColumn;
 
-    private final ObservableList<Observation> endangeredObservations =
+    @FXML
+    private TableColumn<Observation, String> endangerColumn;
+
+    private final ObservableList<Observation> favouriteObservations =
             FXCollections.observableArrayList();
 
-    @FXML
-    private TableColumn<Observation, Boolean> favouriteColumn;
-
-    public EndangeredController() {
+    public FavouritesController() {
         observationDAO = new SqliteObservationDAO();
     }
 
@@ -58,19 +57,17 @@ public class EndangeredController {
                 new SimpleStringProperty(
                         cellData.getValue().getObservedAt().toString()));
 
-        endangeredObservations.setAll(
+        endangerColumn.setCellValueFactory( cellData ->
+                new SimpleStringProperty(
+                        cellData.getValue().getIsEndangered().toString()));
+
+        favouriteObservations.setAll(
                 observationDAO.getAllObservations()
                         .stream()
-                        .filter(observation ->
-                                "Yes".equalsIgnoreCase(
-                                        observation.getIsEndangered()))
+                        .filter(observation -> observation.getIsFavourite())
                         .toList()
         );
 
-        endangeredTableView.setItems(endangeredObservations);
-
-        favouriteColumn.setCellValueFactory(cellData ->
-                new SimpleBooleanProperty(
-                        cellData.getValue().getIsFavourite()));
+        favouritesTableView.setItems(favouriteObservations);
     }
 }

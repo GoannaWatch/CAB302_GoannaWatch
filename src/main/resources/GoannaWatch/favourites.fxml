@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="GoannaWatch.observations.controller.EndangeredController"
+      fx:controller="GoannaWatch.observations.controller.FavouritesController"
       stylesheets="@pageStyling.css"
       prefHeight="800" prefWidth="800">
     <AnchorPane id="pageContent"
@@ -40,19 +40,17 @@
               vgap="10">
 
         <VBox alignment="TOP_CENTER">
-            <Label text="Endangered Species List" style="-fx-font-size: 28px; -fx-font-weight: bold;" />
-            <Label text="Endangered animals are an immense concern to the animal enthusiasts everywhere.
-            Please report on an endangered animal if found." />
+            <Label text="Favourite Observations List" style="-fx-font-size: 28px; -fx-font-weight: bold;" />
+            <Label text="Here are your favourite observations!" />
         </VBox>
         <VBox spacing="10.0">
-            <TableView fx:id="endangeredTableView" VBox.vgrow="ALWAYS">
+            <TableView fx:id="favouritesTableView" VBox.vgrow="ALWAYS">
                 <columns>
                     <TableColumn fx:id="observerColumn" text="Observer" prefWidth="130.0"/>
                     <TableColumn fx:id="locationColumn" text="Location" prefWidth="130.0"/>
                     <TableColumn fx:id="animalColumn" text="Animal" prefWidth="130.0"/>
                     <TableColumn fx:id="endangerColumn" text="Endangered" prefWidth="130.0"/>
                     <TableColumn fx:id="dateColumn" text="Date" prefWidth="130.0"/>
-                    <TableColumn fx:id="favouriteColumn" text="Favourite" prefWidth="130.0"/>
                 </columns>
             </TableView>
         </VBox>

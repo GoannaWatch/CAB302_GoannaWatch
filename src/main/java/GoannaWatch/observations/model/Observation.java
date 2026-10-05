@@ -13,6 +13,7 @@ public class Observation {
     private String animalSeen;
     private String isEndangered;
     private LocalDate observedAt;
+    public Boolean isFavourite;
 
 
     /**
@@ -23,13 +24,15 @@ public class Observation {
      * @param animalSeen The animal observed.
      * @param isEndangered The endangerment status of the animal observed.
      * @param observedAt The date of the observation.
+     * @param isFavourite The favourite status of an observation
      */
-    public Observation(Account observer, String location, String animalSeen, String isEndangered, LocalDate observedAt) {
+    public Observation(Account observer, String location, String animalSeen, String isEndangered, LocalDate observedAt, Boolean isFavourite) {
         setObserver(observer);
         setLocation(location);
         setAnimalSeen(animalSeen);
         setIsEndangered(isEndangered);
         setObservedAt(observedAt);
+        setIsFavourite(isFavourite);
     }
 
     /**
@@ -154,4 +157,26 @@ public class Observation {
         }
         this.observedAt = observedAt;
     }
+
+    /**
+     * Returns the favourite status observed.
+     *
+     * @return The favourite status observed.
+     */
+    public Boolean getIsFavourite() {
+        return isFavourite;
+    }
+
+    /**
+     * Sets the favourite status observed.
+     *
+     * @param isFavourite The favourite status to be set.
+     */
+    public void setIsFavourite(Boolean isFavourite) {
+        if (isFavourite == null) {
+            throw new InputMismatchException("Favourite status cannot be blank.");
+        }
+        this.isFavourite = isFavourite;
+    }
 }
+
