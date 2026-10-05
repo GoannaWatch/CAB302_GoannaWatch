@@ -15,7 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javax.swing.*;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
@@ -26,6 +26,8 @@ import java.util.*;
 public class ObservationController {
 
     private final SqliteObservationDAO observationDAO;
+
+    private LocationAutocomplete locationAutocomplete;
 
     @FXML
     private TableView<Observation> observationsTableView;
@@ -49,6 +51,12 @@ public class ObservationController {
     private CheckBox showMineOnlyCheck;
 
     @FXML
+    private TextField locationTextField;
+
+    @FXML
+    private ComboBox<String> speciesComboBox;
+
+    @FXML
     private RadioButton endangeredYesRadio;
 
     @FXML
@@ -65,12 +73,6 @@ public class ObservationController {
 
     @FXML
     private TextField searchTextField;
-
-    @FXML
-    private ComboBox<String> habitatComboBox;
-
-    @FXML
-    private ComboBox<String> speciesComboBox;
 
     private final ObservableList<Observation> masterObservations = FXCollections.observableArrayList();
 
@@ -99,7 +101,15 @@ public class ObservationController {
 
         observationContainer.setVisible(true);
 
-        habitatComboBox.setValue(observation.getLocation());
+        if (observation.hasCoordinates()) {
+            locationAutocomplete.setPlace(new Place (
+                    observation.getLocation(),
+                    observation.getLatitude(),
+                    observation.getLongitude()));
+        } else {
+            locationAutocomplete.setText(observation.getLocation());
+        }
+
         speciesComboBox.setValue(observation.getAnimalSeen());
 
         if ("Yes".equalsIgnoreCase(observation.getIsEndangered())) {
@@ -127,6 +137,8 @@ public class ObservationController {
         dateColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getObservedAt().toString()));
 
+        locationAutocomplete = new LocationAutocomplete(locationTextField, new PlacesService());
+
         filteredObservations = new FilteredList<>(masterObservations, o -> true);
         sortedObservations = new SortedList<>(filteredObservations);
         sortedObservations.comparatorProperty().bind(observationsTableView.comparatorProperty());
@@ -141,14 +153,14 @@ public class ObservationController {
                 (obs, oldSelection, newSelection) -> selectObservation(newSelection));
 
         loadObservationsFromDao();
-        updateHabitatComboBox();
+
         updateSpeciesComboBox();
-        habitatComboBox.setEditable(true);
         speciesComboBox.setEditable(true);
+
         observationsTableView.getItems().addListener((ListChangeListener<Observation>) change -> {
-            updateHabitatComboBox();
             updateSpeciesComboBox();
         });
+
         observationsTableView.getSelectionModel().selectFirst();
     }
 
@@ -213,7 +225,13 @@ public class ObservationController {
             return;
         }
         try {
-            selected.setLocation(habitatComboBox.getValue());
+            Place place = locationAutocomplete.getSelectedPlace().orElse(null);
+            if (place == null) {
+                showAlert("Please choose a location from the suggestions.");
+                return;
+            }
+
+            selected.setPlace(place);
             selected.setAnimalSeen(speciesComboBox.getValue());
 
             RadioButton selectedEndangered = (RadioButton) isEndangered.getSelectedToggle();
@@ -225,7 +243,9 @@ public class ObservationController {
             selected.setObservedAt(datePicker.getValue());
 
             observationDAO.updateObservation(selected);
+            int id = selected.getId();
             loadObservationsFromDao();
+            selectById(id);
 
         } catch (InputMismatchException e) {
             showAlert(e.getMessage());
@@ -255,17 +275,37 @@ public class ObservationController {
             return;
         }
 
-        final String DEFAULT_LOCATION = "Unknown";
+        final String DEFAULT_LOCATION = "New Location";
         final String DEFAULT_ANIMAL = "Unknown";
         final String DEFAULT_STATUS = "No";
         final LocalDate DEFAULT_DATE = LocalDate.now();
 
-        Observation newObservation = new Observation(currentAccount, DEFAULT_LOCATION, DEFAULT_ANIMAL, DEFAULT_STATUS, DEFAULT_DATE);
+        Observation newObservation = new Observation(
+                currentAccount,
+                DEFAULT_LOCATION,
+                null,
+                null,
+                DEFAULT_ANIMAL,
+                DEFAULT_STATUS,
+                DEFAULT_DATE
+        );
+
         observationDAO.addObservation(newObservation);
         loadObservationsFromDao();
+        selectById(newObservation.getId());
+        locationTextField.requestFocus();
+    }
 
-        observationsTableView.getSelectionModel().select(newObservation);
-        habitatComboBox.requestFocus();
+    /**
+     * Selects the table row for the observation with the given ID.
+     * Fixes reload from Sqlite changing the selected row on refresh by creating a reference.
+     * @param id the database ID of the observation to select
+     */
+    private void selectById(int id) {
+        sortedObservations.stream()
+                .filter(o -> o.getId() == id)
+                .findFirst()
+                .ifPresent(o -> observationsTableView.getSelectionModel().select(o));
     }
 
     /**
@@ -300,17 +340,6 @@ public class ObservationController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
-    }
-
-    /**
-     * Updates habitat combo box to include all habitats previously inputted
-     */
-    private void updateHabitatComboBox(){
-        habitatComboBox.getItems().setAll(); // empty list
-        String[] habitatsList = observationsTableView.getItems().stream().map(Observation::getLocation).distinct().toArray(String[]::new);
-        habitatComboBox.getItems().addAll(habitatsList); // add the current distinct locations from the table
-        habitatComboBox.getItems().removeAll("Unknown");
-        habitatComboBox.getItems().addFirst("Unknown"); // since unknown can be a value in the table, but is also a default value given in the combobox, we reset it here to prevent duplicates
     }
 
     /**

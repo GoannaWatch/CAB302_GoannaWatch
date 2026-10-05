@@ -3,17 +3,28 @@ package GoannaWatch.observations.controller;
 import GoannaWatch.App;
 import GoannaWatch.account.model.Account;
 import GoannaWatch.account.model.Session;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import javafx.concurrent.Worker;
+import javafx.scene.control.Alert;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import GoannaWatch.observations.model.IObservationDAO;
+import GoannaWatch.observations.model.Observation;
+import GoannaWatch.observations.model.SqliteObservationDAO;
+import netscape.javascript.JSObject;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
+/**
+ * Controller for the map view of the application.
+ */
 public class MapController {
 
     @FXML
@@ -35,12 +46,21 @@ public class MapController {
     private Hyperlink themeButton;
 
     /**
+     * Embedded browser displaying Leaflet map.
+     */
+    @FXML
+    private WebView mapWebView;
+
+    private final IObservationDAO observationDAO = new SqliteObservationDAO();
+
+    /**
      * Initialises the controller class. This method is automatically called after the fxml file has been loaded.
      */
     @FXML
-    public void initialize(){
+    public void initialize() {
         Account current = Session.getCurrentAccount();
         updateThemeButtonText();
+        loadMap();
     }
 
     /**
@@ -65,6 +85,7 @@ public class MapController {
 
     /**
      * Handles the action of clicking the logout button. Loads the Welcome page view of the application.
+     *
      * @throws IOException If the .fxml file for the welcome view isn't found.
      */
     @FXML
@@ -78,6 +99,7 @@ public class MapController {
 
     /**
      * Handles the action of clicking the "Record an Observation" button. Loads the Observation view of the application.
+     *
      * @throws IOException If the .fxml file for the observation view isn't found.
      */
     @FXML
@@ -100,10 +122,10 @@ public class MapController {
     @FXML
     //TODO create Map page
     protected void onMapButtonClick() throws IOException {
-    //    Stage stage = (Stage) mapButton.getScene().getWindow();
-    //    FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("map.fxml"));
-    //    Scene scene = new Scene(fxmlLoader.load());
-    //    stage.setScene(scene);
+        //    Stage stage = (Stage) mapButton.getScene().getWindow();
+        //    FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("map.fxml"));
+        //    Scene scene = new Scene(fxmlLoader.load());
+        //    stage.setScene(scene);
     }
 
     @FXML
@@ -116,5 +138,49 @@ public class MapController {
     }
 
     public void onProfileButtonClick() {
+    }
+
+    /**
+     * Loads map.html into the WebView, and adds a pin for every observation with coords.
+     */
+    private void loadMap() {
+        try (InputStream in = App.class.getResourceAsStream("map.html")) {
+            String html = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+
+            WebEngine engine = mapWebView.getEngine();
+            engine.setOnAlert(e -> System.err.println("Map: " + e.getData()));
+            engine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+                if (newState == Worker.State.SUCCEEDED) {
+                    addObservationPins(engine);
+                }
+            });
+            engine.setUserAgent("GoannaWatch");
+            engine.loadContent(html);
+        } catch (IOException e) {
+            new Alert(Alert.AlertType.ERROR, "Could not load the map page.").show();
+        }
+    }
+
+    /**
+     * Adds a pin to the map for  each stored observation.
+     * Observations without coords are skipped.
+     *
+     * @param engine the web engine displaying the loaded page.
+     */
+    private void addObservationPins(WebEngine engine) {
+        JSObject window = (JSObject) engine.executeScript("window");
+
+        for (Observation o : observationDAO.getAllObservations()) {
+            if (!o.hasCoordinates()) {
+                continue;
+            }
+            window.call("addObservation",
+                    o.getAnimalSeen(),
+                    o.getLocation(),
+                    o.getObserver().getFullName(),
+                    o.getObservedAt().toString(),
+                    o.getLatitude(),
+                    o.getLongitude());
+        }
     }
 }

@@ -10,23 +10,28 @@ public class Observation {
     private int id;
     private Account observer;
     private String location;
+    private Double latitude;
+    private Double longitude;
     private String animalSeen;
     private String isEndangered;
     private LocalDate observedAt;
 
 
     /**
-     * Constructs a new Observation with the specified account, location, animal, and date.
+     * Constructs a new Observation.
      *
-     * @param observer   The account recording the observation.
-     * @param location   The location of the observation.
-     * @param animalSeen The animal observed.
+     * @param observer     The account recording the observation.
+     * @param location     The display name/address of the location.
+     * @param latitude     The latitude of the location, or null if unresolved.
+     * @param longitude    The longitude of the location, or null if unresolved.
+     * @param animalSeen   The animal observed.
      * @param isEndangered The endangerment status of the animal observed.
-     * @param observedAt The date of the observation.
+     * @param observedAt   The date of the observation.
      */
-    public Observation(Account observer, String location, String animalSeen, String isEndangered, LocalDate observedAt) {
+    public Observation(Account observer, String location, Double latitude, Double longitude,
+                       String animalSeen, String isEndangered, LocalDate observedAt) {
         setObserver(observer);
-        setLocation(location);
+        setLocationDetails(location, latitude, longitude);
         setAnimalSeen(animalSeen);
         setIsEndangered(isEndangered);
         setObservedAt(observedAt);
@@ -80,18 +85,48 @@ public class Observation {
         return location;
     }
 
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
     /**
-     * Sets the location that the animal was observed.
-     *
-     * @param location The location to be set.
+     * @return true if observation has a resolved place and can be shown on the map
      */
-    public void setLocation(String location) {
+    public boolean hasCoordinates() {
+        return latitude != null && longitude != null;
+    }
+
+    public void setPlace(Place place) {
+        if (place == null) {
+            throw new InputMismatchException("Location cannot be blank.");
+        }
+        setLocationDetails(place.getName(), place.getLatitude(), place.getLongitude());
+    }
+
+    /**
+     * Validates location. Location cannot be blank or out of bounds.
+     * */
+    private void setLocationDetails(String location, Double latitude, Double longitude) {
         if (location == null || location.isBlank()) {
             throw new InputMismatchException("Location cannot be blank.");
         }
+        if ((latitude == null) != (longitude == null)) {
+            throw new InputMismatchException("Latitude and longitude must both be set or both be empty.");
+        }
+        if (latitude != null && (latitude < -90 || latitude > 90)) {
+            throw new InputMismatchException("Latitude must be between -90 and 90.");
+        }
+        if (longitude != null && (longitude < -180 || longitude > 180)) {
+            throw new InputMismatchException("Longitude must be between -180 and 180.");
+        }
         this.location = location;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
-
     /**
      * Returns the animal observed.
      *

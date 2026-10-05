@@ -11,7 +11,7 @@ import java.sql.Statement;
  */
 public class DatabaseInitializer {
 
-    private static final int CURRENT_DATABASE_VERSION = 2;
+    private static final int CURRENT_DATABASE_VERSION = 3;
 
     /**
      * Creates the database tables and applies any required migrations.
@@ -45,6 +45,16 @@ public class DatabaseInitializer {
                     migrateToVersion2(connection);
                     setDatabaseVersion(connection, 2);
                     version = 2;
+                }
+
+                /*
+                Version 3:
+                   Add latitude and longitude to observations.
+                */
+                if (version < 3) {
+                    migrateToVersion3(connection);
+                    setDatabaseVersion(connection, 3);
+                    version = 3;
                 }
 
                 /*
@@ -175,6 +185,21 @@ public class DatabaseInitializer {
 
             try (Statement statement = connection.createStatement()) {
                 statement.executeUpdate(sql);
+            }
+        }
+    }
+
+    /**
+     * Version 3 of the database.
+     * Adds nullable latitude and longitude columns to observations.
+     */
+    private static void migrateToVersion3(Connection connection) throws SQLException {
+        try (Statement statement = connection.createStatement()) {
+            if (!columnExists(connection, "observations", "latitude")) {
+                statement.executeUpdate("ALTER TABLE observations ADD COLUMN latitude REAL");
+            }
+            if (!columnExists(connection, "observations", "longitude")) {
+                statement.executeUpdate("ALTER TABLE observations ADD COLUMN longitude REAL");
             }
         }
     }

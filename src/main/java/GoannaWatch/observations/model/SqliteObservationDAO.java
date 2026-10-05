@@ -2,6 +2,7 @@ package GoannaWatch.observations.model;
 
 import GoannaWatch.database.DatabaseConnection;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,12 +11,6 @@ import GoannaWatch.account.model.SqliteAccountDAO;
 import GoannaWatch.database.DatabaseInitializer;
 
 import java.time.LocalDate;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
  * Saves and reads wildlife observations in SQLite.
@@ -28,10 +23,10 @@ public class SqliteObservationDAO implements IObservationDAO{
     @Override
     public void addObservation(Observation observation) {
         String sql = """
-                INSERT INTO observations
-                (observer_id, location, animal_seen, is_endangered, observed_at)
-                VALUES (?, ?, ?, ?, ?)
-                """;
+            INSERT INTO observations
+            (observer_id, location, latitude, longitude, animal_seen, is_endangered, observed_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """;
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(
@@ -39,9 +34,11 @@ public class SqliteObservationDAO implements IObservationDAO{
 
             statement.setInt(1, observation.getObserver().getId());
             statement.setString(2, observation.getLocation());
-            statement.setString(3, observation.getAnimalSeen());
-            statement.setString(4, observation.getIsEndangered());
-            statement.setString(5, observation.getObservedAt().toString());
+            setNullableDouble(statement, 3, observation.getLatitude());
+            setNullableDouble(statement, 4, observation.getLongitude());
+            statement.setString(5, observation.getAnimalSeen());
+            statement.setString(6, observation.getIsEndangered());
+            statement.setString(7, observation.getObservedAt().toString());
 
             statement.executeUpdate();
 
@@ -82,6 +79,8 @@ public class SqliteObservationDAO implements IObservationDAO{
                     Observation observation = new Observation(
                             observer,
                             result.getString("location"),
+                            getNullableDouble(result, "latitude"),
+                            getNullableDouble(result, "longitude"),
                             result.getString("animal_seen"),
                             result.getString("is_endangered"),
                             LocalDate.parse(result.getString("observed_at"))
@@ -103,7 +102,8 @@ public class SqliteObservationDAO implements IObservationDAO{
     public void updateObservation(Observation observation) {
         String sql = """
                 UPDATE observations
-                SET location = ?, animal_seen = ?, is_endangered = ?, observed_at = ?
+                SET location = ?, latitude = ?, longitude = ?, 
+                    animal_seen = ?, is_endangered = ?, observed_at = ?
                 WHERE id = ?
                 """;
 
@@ -111,14 +111,16 @@ public class SqliteObservationDAO implements IObservationDAO{
         PreparedStatement statement = connection.prepareStatement(sql)){
 
             statement.setString(1, observation.getLocation());
-            statement.setString(2, observation.getAnimalSeen());
-            statement.setString(3, observation.getIsEndangered());
-            statement.setString(4, observation.getObservedAt().toString());
-            statement.setInt(5, observation.getId());
+            setNullableDouble(statement, 2, observation.getLatitude());
+            setNullableDouble(statement, 3, observation.getLongitude());
+            statement.setString(4, observation.getAnimalSeen());
+            statement.setString(5, observation.getIsEndangered());
+            statement.setString(6, observation.getObservedAt().toString());
+            statement.setInt(7, observation.getId());
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to update observation: " + e.getMessage());
+            throw new RuntimeException("Failed to update observation: " + e.getMessage(), e);
         }
     }
 
@@ -131,7 +133,7 @@ public class SqliteObservationDAO implements IObservationDAO{
             statement.setInt(1, observation.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to delete observation: " + e.getMessage());
+            throw new RuntimeException("Failed to delete observation: " + e.getMessage(), e);
         }
     }
 
@@ -154,7 +156,8 @@ public class SqliteObservationDAO implements IObservationDAO{
                 System.out.println(
                         observation.getId() + " | "
                                 + observation.getObserver().getFullName() + " | "
-                                + observation.getLocation() + " | "
+                                + observation.getLocation() + " ("
+                                + observation.getLatitude() + ", " + observation.getLongitude() + ") | "
                                 + observation.getAnimalSeen() + " | "
                                 + observation.getIsEndangered() + " | "
                                 + observation.getObservedAt()
@@ -190,6 +193,8 @@ public class SqliteObservationDAO implements IObservationDAO{
                 Observation observation = new Observation(
                         observer,
                         result.getString("location"),
+                        getNullableDouble(result, "latitude"),
+                        getNullableDouble(result, "longitude"),
                         result.getString("animal_seen"),
                         result.getString("is_endangered"),
                         LocalDate.parse(result.getString("observed_at"))
@@ -233,6 +238,8 @@ public class SqliteObservationDAO implements IObservationDAO{
                     Observation observation = new Observation(
                             observer,
                             result.getString("location"),
+                            getNullableDouble(result, "latitude"),
+                            getNullableDouble(result, "longitude"),
                             result.getString("animal_seen"),
                             result.getString("is_endangered"),
                             LocalDate.parse(result.getString("observed_at"))
@@ -247,6 +254,20 @@ public class SqliteObservationDAO implements IObservationDAO{
         }
 
         return observations;
+    }
+
+    private static void setNullableDouble(PreparedStatement statement, int index, Double value)
+            throws SQLException {
+        if (value == null) {
+            statement.setNull(index, Types.REAL);
+        } else {
+            statement.setDouble(index, value);
+        }
+    }
+
+    private static Double getNullableDouble(ResultSet result, String column) throws SQLException {
+        double value = result.getDouble(column);
+        return result.wasNull() ? null : value;
     }
 
 }
