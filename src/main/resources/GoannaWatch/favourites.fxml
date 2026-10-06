@@ -55,4 +55,5 @@
             </TableView>
         </VBox>
     </GridPane>
+    <Button text="Back" onAction="#onBackButtonClick" maxWidth="Infinity"/>
 </VBox>
