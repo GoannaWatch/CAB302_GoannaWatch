@@ -16,6 +16,7 @@ module GoannaWatch {
     requires java.net.http;
     requires org.json;
     requires jdk.jsobject;
+    requires org.apache.commons.csv;
 
 
     opens GoannaWatch to javafx.fxml;

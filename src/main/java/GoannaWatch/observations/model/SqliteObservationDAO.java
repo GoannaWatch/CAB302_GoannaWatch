@@ -2,6 +2,11 @@ package GoannaWatch.observations.model;
 
 import GoannaWatch.database.DatabaseConnection;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +14,9 @@ import java.util.List;
 import GoannaWatch.account.model.Account;
 import GoannaWatch.account.model.SqliteAccountDAO;
 import GoannaWatch.database.DatabaseInitializer;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.QuoteMode;
 
 import java.time.LocalDate;
 
@@ -256,6 +264,50 @@ public class SqliteObservationDAO implements IObservationDAO{
         return observations;
     }
 
+    public void exportObservations(){
+        File filePath = new File("C:\\Users\\kayde\\Downloads");
+        String fileName = filePath.toString() + "\\observationsexport.csv";
+        List<Observation> observations = new ArrayList<>();
+
+        String sql = """
+                SELECT observations.*, accounts.email AS observer_email
+                FROM observations
+                JOIN accounts ON observations.observer_id = accounts.id
+                ORDER BY observations.id
+                """;
+        if (filePath.isDirectory()) {
+            try (Connection connection = DatabaseConnection.getConnection();) {
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet result = statement.executeQuery();
+                BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileName));
+                CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.builder().setHeader(result.getMetaData()).get());
+                SqliteAccountDAO accountDAO = new SqliteAccountDAO();
+                while (result.next()) {
+                    Account observer = accountDAO.getAccountByEmail(
+                            result.getString("observer_email")
+                    );
+                    csvPrinter.printRecord(
+                            observer.getFullName(),
+                            result.getString("location"),
+                            getNullableDouble(result, "latitude"),
+                            getNullableDouble(result, "longitude"),
+                            result.getString("animal_seen"),
+                            result.getString("is_endangered"),
+                            LocalDate.parse(result.getString("observed_at"))
+                    );
+                }
+                csvPrinter.flush();
+                csvPrinter.close();
+            } catch (SQLException e) {
+                throw new RuntimeException("Failed to get observations: " + e.getMessage(), e);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to export data: " + e.getMessage(), e);
+            }
+        } else {
+            System.out.println("File path does not exist.");
+            System.exit(0);
+        }
+    }
     private static void setNullableDouble(PreparedStatement statement, int index, Double value)
             throws SQLException {
         if (value == null) {

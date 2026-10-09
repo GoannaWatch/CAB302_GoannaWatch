@@ -9,6 +9,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -351,5 +352,13 @@ public class ObservationController {
         speciesComboBox.getItems().addAll(habitatsList); // add the current distinct locations from the table
         speciesComboBox.getItems().removeAll("Unknown");
         speciesComboBox.getItems().addFirst("Unknown"); // since unknown can be a value in the table, but is also a default value given in the combobox, we reset it here to prevent duplicates
+    }
+
+    /**
+     * Exports Observation table to csv file
+     */
+    @FXML
+    private void onExport() {
+        observationDAO.exportObservations();
     }
 }

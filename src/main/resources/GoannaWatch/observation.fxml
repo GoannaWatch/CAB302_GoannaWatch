@@ -63,6 +63,7 @@
             </TableView>
             <HBox spacing="10.0">
                 <Button text="New" onAction="#onAdd" maxWidth="Infinity"/>
+                <Button text="Export table" onAction="#onExport" />
             </HBox>
         </VBox>
         <VBox spacing="10.0" prefWidth="400" fx:id="observationContainer">
