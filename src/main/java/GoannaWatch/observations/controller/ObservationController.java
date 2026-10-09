@@ -76,6 +76,15 @@ public class ObservationController {
     @FXML
     private TextField searchTextField;
 
+    @FXML
+    private Button confirmButton;
+
+    @FXML
+    private Button deleteButton;
+
+    @FXML
+    private Button cancelButton;
+
     private final ObservableList<Observation> masterObservations = FXCollections.observableArrayList();
 
     private FilteredList<Observation> filteredObservations;
@@ -102,6 +111,19 @@ public class ObservationController {
         }
 
         observationContainer.setVisible(true);
+
+        // Only show edit and delete buttons to the owner or an expert.
+        Account account = Session.getCurrentAccount();
+        boolean allowed = account != null
+                && (account.isExpert()
+                || account.getId() == observation.getObserver().getId());
+
+        confirmButton.setVisible(allowed);
+        confirmButton.setManaged(allowed);
+        deleteButton.setVisible(allowed);
+        deleteButton.setManaged(allowed);
+        cancelButton.setVisible(allowed);
+        cancelButton.setManaged(allowed);
 
         locationTextField.setText(observation.getLocation());
         animalTextField.setText(observation.getAnimalSeen());
@@ -210,6 +232,21 @@ public class ObservationController {
         if (selected == null) {
             return;
         }
+
+        Account account = Session.getCurrentAccount();
+
+        if (account == null) {
+            showAlert("Please log in first.");
+            return;
+        }
+
+        // Only the owner or an expert can edit the observation.
+        if (!account.isExpert()
+                && account.getId() != selected.getObserver().getId()) {
+            showAlert("You can only edit your own observations.");
+            return;
+        }
+
         try {
             selected.setLocation(locationTextField.getText());
             selected.setAnimalSeen(animalTextField.getText());
@@ -228,6 +265,10 @@ public class ObservationController {
         } catch (InputMismatchException e) {
             showAlert(e.getMessage());
         }
+
+        catch (SecurityException | IllegalArgumentException e) {
+            showAlert(e.getMessage());
+        }
     }
 
     /**
@@ -237,8 +278,21 @@ public class ObservationController {
     private void onDelete() {
         Observation selected = observationsTableView.getSelectionModel().getSelectedItem();
         if (selected != null) {
+            // Ask before deleting the selected observation.
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Delete Observation");
+            alert.setHeaderText(null);
+            alert.setContentText("Delete this observation?");
+
+            if (alert.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+                return;
+            }
+            try {
             observationDAO.deleteObservation(selected);
             loadObservationsFromDao();
+            } catch (SecurityException | IllegalArgumentException e) {
+                showAlert(e.getMessage());
+            }
         }
     }
 

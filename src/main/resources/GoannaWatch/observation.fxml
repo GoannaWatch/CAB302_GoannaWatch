@@ -82,9 +82,9 @@
             </GridPane>
 
             <HBox spacing="10.0" alignment="CENTER">
-                <Button text="Confirm" onAction="#onEditConfirm"/>
-                <Button text="Cancel" onAction="#onCancel"/>
-                <Button text="Delete" onAction="#onDelete"/>
+                <Button fx:id="confirmButton" text="Confirm" onAction="#onEditConfirm"/>
+                <Button fx:id="cancelButton" text="Cancel" onAction="#onCancel"/>
+                <Button fx:id="deleteButton" text="Delete" onAction="#onDelete"/>
             </HBox>
         </VBox>
     </HBox>
