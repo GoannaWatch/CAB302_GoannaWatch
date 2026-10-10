@@ -28,6 +28,9 @@ public class ObservationController {
 
     private final SqliteObservationDAO observationDAO;
 
+    @FXML
+    private Label ExportSuccessMsg;
+
     private LocationAutocomplete locationAutocomplete;
 
     @FXML
@@ -360,5 +363,6 @@ public class ObservationController {
     @FXML
     private void onExport() {
         observationDAO.exportObservations();
+        ExportSuccessMsg.setText("Data Successfully Exported");
     }
 }
