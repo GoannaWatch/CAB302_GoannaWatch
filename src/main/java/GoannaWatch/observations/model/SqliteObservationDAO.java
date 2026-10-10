@@ -265,7 +265,8 @@ public class SqliteObservationDAO implements IObservationDAO{
     }
 
     public void exportObservations(){
-        File filePath = new File("C:\\Users\\kayde\\Downloads");
+        String home = System.getProperty("user.home");
+        File filePath = new File(home + "\\Downloads");
         String fileName = filePath.toString() + "\\observationsexport.csv";
         List<Observation> observations = new ArrayList<>();
 
