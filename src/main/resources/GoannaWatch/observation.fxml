@@ -14,6 +14,8 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.control.TableView?>
 
+<?import javafx.scene.control.TextArea?>
+
 <?import javafx.scene.control.TableColumn?>
 <VBox spacing="20.0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="GoannaWatch.observations.controller.ObservationController">
@@ -86,6 +88,28 @@
                 <Button fx:id="cancelButton" text="Cancel" onAction="#onCancel"/>
                 <Button fx:id="deleteButton" text="Delete" onAction="#onDelete"/>
             </HBox>
+
+            <Label text="Comments"/>
+
+            <TextArea fx:id="commentsArea"
+                      editable="false"
+                      wrapText="true"
+                      prefHeight="120"/>
+
+            <VBox fx:id="commentForm"
+                  spacing="10.0"
+                  visible="false"
+                  managed="false">
+
+                <TextArea fx:id="commentTextArea"
+                          promptText="Write a comment..."
+                          wrapText="true"
+                          prefHeight="80"/>
+
+                <Button fx:id="addCommentButton"
+                        text="Add Comment"
+                        onAction="#onAddComment"/>
+            </VBox>
         </VBox>
     </HBox>
     <Button text="Back" onAction="#onBackButtonClick" maxWidth="Infinity"/>

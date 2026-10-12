@@ -11,7 +11,7 @@ import java.sql.Statement;
  */
 public class DatabaseInitializer {
 
-    private static final int CURRENT_DATABASE_VERSION = 3;
+    private static final int CURRENT_DATABASE_VERSION = 4;
 
     /**
      * Creates the database tables and applies any required migrations.
@@ -55,6 +55,16 @@ public class DatabaseInitializer {
                     migrateToVersion3(connection);
                     setDatabaseVersion(connection, 3);
                     version = 3;
+                }
+
+                /*
+                Version 4:
+                Add comments to observations.
+                 */
+                if (version < 4) {
+                    migrateToVersion4(connection);
+                    setDatabaseVersion(connection, 4);
+                    version = 4;
                 }
 
                 /*
@@ -206,6 +216,30 @@ public class DatabaseInitializer {
             try (Statement statement = connection.createStatement()) {
                 statement.executeUpdate(sql);
             }
+        }
+    }
+
+    /**
+     * Version 4 of the database.
+     * Creates the comments table.
+     */
+    private static void migrateToVersion4(Connection connection)
+            throws SQLException {
+
+        String sql = """
+            CREATE TABLE IF NOT EXISTS comments (
+                id INTEGER PRIMARY KEY,
+                observation_id INTEGER NOT NULL,
+                author_id INTEGER NOT NULL,
+                text TEXT NOT NULL,
+                FOREIGN KEY (observation_id) REFERENCES observations(id)
+                    ON DELETE CASCADE,
+                FOREIGN KEY (author_id) REFERENCES accounts(id)
+            )
+            """;
+
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate(sql);
         }
     }
 
