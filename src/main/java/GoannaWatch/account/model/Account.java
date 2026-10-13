@@ -20,6 +20,7 @@ public class Account {
     private String lastName;
     private String email;
     private String password;
+    private String role = "user";
 
     /**
      * Constructs a new Account with the specified first name, last name, email, and password
@@ -161,6 +162,38 @@ public class Account {
 
     public String getFullName() {
         return firstName + " " + lastName;
+    }
+
+    /**
+     * Returns the account's role.
+     *
+     * @return user or expert
+     */
+    public String getRole() {
+        return role;
+    }
+
+    /**
+     * Sets the role held by this account object.
+     *
+     * @param role user or expert
+     * @throws IllegalArgumentException if the role is not supported
+     */
+    public void setRole(String role) {
+        if (!"user".equals(role) && !"expert".equals(role)) {
+            throw new IllegalArgumentException("Invalid account role.");
+        }
+
+        this.role = role;
+    }
+
+    /**
+     * Checks whether this account is an expert.
+     *
+     * @return true if the role is expert
+     */
+    public boolean isExpert() {
+        return "expert".equals(role);
     }
 }
 

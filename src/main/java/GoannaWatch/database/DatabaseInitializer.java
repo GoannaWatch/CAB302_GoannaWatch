@@ -11,7 +11,7 @@ import java.sql.Statement;
  */
 public class DatabaseInitializer {
 
-    private static final int CURRENT_DATABASE_VERSION = 4;
+    private static final int CURRENT_DATABASE_VERSION = 5;
 
     /**
      * Creates the database tables and applies any required migrations.
@@ -58,13 +58,23 @@ public class DatabaseInitializer {
                 }
 
                 /*
-                Version 3:
+                Version 4:
                 Add favourite status to observations.
                 */
                 if (version < 4) {
                     migrateToVersion4(connection);
                     setDatabaseVersion(connection, 4);
                     version = 4;
+                }
+
+                /*
+                Version 5:
+                Add user and expert roles to accounts.
+                 */
+                if (version < 5) {
+                    migrateToVersion3(connection);
+                    setDatabaseVersion(connection, 5);
+                    version = 5;
                 }
 
                 /*
@@ -214,6 +224,10 @@ public class DatabaseInitializer {
         }
     }
 
+    /**
+     * Version 4 of the database.
+     * Adds isFavourite columns to the observations.
+     */
     private static void migrateToVersion4(Connection connection) throws SQLException {
         if (!columnExists(connection, "observations", "is_favourite")) {
             String sql = """
@@ -227,6 +241,25 @@ public class DatabaseInitializer {
         }
     }
 
+    /**
+     * Version 5 of the database.
+     * Adds the role column to accounts if it is not already present.
+     * Existing accounts receive the user role by default.
+     */
+    private static void migrateToVersion5(Connection connection)
+            throws SQLException {
+
+        if (!columnExists(connection, "accounts", "role")) {
+            String sql = """
+                    ALTER TABLE accounts
+                    ADD COLUMN role TEXT NOT NULL DEFAULT 'user'
+                    """;
+
+            try (Statement statement = connection.createStatement()) {
+                statement.executeUpdate(sql);
+            }
+        }
+    }
 
     /**
      * Checks whether a table contains a particular column.

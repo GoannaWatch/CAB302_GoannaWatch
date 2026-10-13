@@ -19,6 +19,8 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
 
+import GoannaWatch.account.model.Session;
+
 /**
  * Saves and reads wildlife observations in SQLite.
  * Each observation is linked to the account that created it.
@@ -117,6 +119,27 @@ public class SqliteObservationDAO implements IObservationDAO{
 
     @Override
     public void updateObservation(Observation observation) {
+
+        Account account = Session.getCurrentAccount();
+
+        if (account == null) {
+            throw new SecurityException("Please log in first.");
+        }
+
+        // Read the saved observation to check who owns it.
+        Observation savedObservation = getObservation(observation.getId());
+
+        if (savedObservation == null) {
+            throw new IllegalArgumentException("Observation not found.");
+        }
+
+        if (!account.isExpert()
+                && account.getId() != savedObservation.getObserver().getId()) {
+            throw new SecurityException(
+                    "You can only edit your own observations."
+            );
+        }
+
         String sql = """
                 UPDATE observations
                 SET location = ?, latitude = ?, longitude = ?, 
@@ -144,6 +167,24 @@ public class SqliteObservationDAO implements IObservationDAO{
 
     @Override
     public void deleteObservation(Observation observation) {
+
+        Account account = Session.getCurrentAccount();
+
+        if (account == null) {
+            throw new SecurityException("Please log in first.");
+        }
+
+        // Read the saved observation to check who owns it.
+        Observation savedObservation = getObservation(observation.getId());
+
+        if (savedObservation == null) {
+            throw new IllegalArgumentException("Observation not found.");
+        }
+
+        if (!account.isExpert() && account.getId() != savedObservation.getObserver().getId()) {
+            throw new SecurityException("You can only delete your own observations.");
+        }
+
         String sql = "DELETE FROM observations WHERE id = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();

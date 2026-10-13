@@ -88,6 +88,7 @@ public class SqliteAccountDAO implements IAccountDAO{
                         result.getString("email")
                 );
                 account.setId(result.getInt("id"));
+                account.setRole(result.getString("role"));
                 accounts.add(account);
             }
         } catch (SQLException e) {
@@ -118,6 +119,7 @@ public class SqliteAccountDAO implements IAccountDAO{
                     );
 
                     account.setId(result.getInt("id"));
+                    account.setRole(result.getString("role"));
                     return account;
                 }
             }
@@ -182,5 +184,76 @@ public class SqliteAccountDAO implements IAccountDAO{
         }
 
         return false;
+    }
+
+    /**
+     * Creates the default expert account if it does not already exist.
+     * This account provides initial access to the expert functions.
+     */
+    public void createDefaultExpert() {
+        String sql = """
+                INSERT OR IGNORE INTO accounts
+                (first_name, last_name, email, password, role)
+                VALUES (?, ?, ?, ?, 'expert')
+                """;
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, "Min");
+            statement.setString(2, "Expert");
+            statement.setString(3, "expert@123.com");
+            statement.setString(
+                    4,
+                    PasswordUtils.hashPassword("Expert@123")
+            );
+
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(
+                    "Failed to create the default expert account.", e
+            );
+        }
+    }
+
+    /**
+     * Grants expert access to the account with the given ID.
+     * The currently logged-in account must be an expert.
+     *
+     * @param accountId the ID of the account receiving expert access
+     * @throws SecurityException        if the current user is not an expert
+     * @throws IllegalArgumentException if the target account does not exist
+     * @throws RuntimeException         if the database update fails
+     */
+    public void grantExpert(int accountId) {
+        Account currentAccount = Session.getCurrentAccount();
+
+        if (currentAccount == null || !currentAccount.isExpert()) {
+            throw new SecurityException(
+                    "Only experts can grant expert access."
+            );
+        }
+
+        String sql = """
+                UPDATE accounts
+                SET role = 'expert'
+                WHERE id = ?
+                """;
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, accountId);
+
+            if (statement.executeUpdate() == 0) {
+                throw new IllegalArgumentException("Account not found.");
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(
+                    "Failed to grant expert access.", e
+            );
+        }
     }
 }

@@ -49,6 +49,9 @@ public class LandingController {
     @FXML
     private Hyperlink themeButton;
 
+    @FXML
+    private Button usersButton;
+
     /**
      * Initialises the controller class. This method is automatically called after the fxml file has been loaded.
      */
@@ -56,9 +59,17 @@ public class LandingController {
     public void initialize(){
         Account current = Session.getCurrentAccount();
 
+        // Only show the users button to experts.
+        boolean expert = current != null && current.isExpert();
+        usersButton.setVisible(expert);
+        usersButton.setManaged(expert);
+
         if (current != null) {
             welcomeLabel.setText("Welcome, " + current.getFullName() + "!");
-            emailLabel.setText(current.getEmail());
+
+            // Displays the account role next to the email.
+            String role = current.isExpert() ? "Expert" : "User";
+            emailLabel.setText("[" + role + "] " + current.getEmail());
         }
 
         updateThemeButtonText();
@@ -159,6 +170,25 @@ public class LandingController {
         Stage stage = (Stage) welcomeLabel.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(
                 App.class.getResource("profile.fxml")
+        );
+        stage.setScene(new Scene(loader.load()));
+    }
+
+    /**
+     * Opens the users page for experts.
+     * @throws IOException If the users view cannot be loaded.
+     */
+    @FXML
+    private void onUsersButtonClick() throws IOException {
+        Account account = Session.getCurrentAccount();
+
+        if (account == null || !account.isExpert()) {
+            return;
+        }
+
+        Stage stage = (Stage) usersButton.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(
+                App.class.getResource("users.fxml")
         );
         stage.setScene(new Scene(loader.load()));
     }
