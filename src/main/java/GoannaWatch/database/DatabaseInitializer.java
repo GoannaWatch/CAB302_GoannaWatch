@@ -72,7 +72,7 @@ public class DatabaseInitializer {
                 Add user and expert roles to accounts.
                  */
                 if (version < 5) {
-                    migrateToVersion3(connection);
+                    migrateToVersion5(connection);
                     setDatabaseVersion(connection, 5);
                     version = 5;
                 }
