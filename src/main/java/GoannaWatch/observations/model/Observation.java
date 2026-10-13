@@ -51,7 +51,7 @@ public class Observation {
      */
     public Observation (Account observer, String location, String animalSeen,
                         String isEndangered, LocalDate observedAt) {
-        this(observer, location, null, null, animalSeen, isEndangered, observedAt);
+        this(observer, location, null, null, animalSeen, isEndangered, observedAt, false);
     }
 
     /**
