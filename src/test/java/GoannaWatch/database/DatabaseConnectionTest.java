@@ -238,9 +238,9 @@ public class DatabaseConnectionTest {
                 );
 
                 assertEquals(
-                        3,
+                        6,
                         result.getInt("version"),
-                        "Database should be migrated to schema version 3"
+                        "Database should be migrated to schema version 6"
                 );
             }
 
