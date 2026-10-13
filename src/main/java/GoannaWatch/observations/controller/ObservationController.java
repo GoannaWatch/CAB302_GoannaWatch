@@ -3,6 +3,7 @@ package GoannaWatch.observations.controller;
 import GoannaWatch.App;
 import GoannaWatch.account.model.*;
 import GoannaWatch.observations.model.*;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -15,8 +16,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
@@ -52,6 +56,9 @@ public class ObservationController {
     private TableColumn<Observation, String> dateColumn;
 
     @FXML
+    private TableColumn<Observation, Boolean> favouriteColumn;
+
+    @FXML
     private CheckBox showMineOnlyCheck;
 
     @FXML
@@ -78,11 +85,21 @@ public class ObservationController {
     @FXML
     private TextField searchTextField;
 
+    @FXML
+    private Label imageLabel;
+
+    @FXML
+    private Label videoLabel;
+
     private final ObservableList<Observation> masterObservations = FXCollections.observableArrayList();
 
     private FilteredList<Observation> filteredObservations;
 
     private SortedList<Observation> sortedObservations;
+
+    private File selectedImage;
+
+    private File selectedVideo;
 
     /**
      * Initialises the controller class. This method is automatically called after the .fxml file has been loaded.
@@ -140,6 +157,37 @@ public class ObservationController {
                 new SimpleStringProperty(cellData.getValue().getIsEndangered()));
         dateColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getObservedAt().toString()));
+        favouriteColumn.setCellFactory(column -> new TableCell<Observation, Boolean>() {
+
+            private final Button button = new Button("Favourite");
+
+            {
+                button.setOnAction(event -> {
+                    Observation observation = getTableView().getItems().get(getIndex());
+
+                    observation.setIsFavourite(!observation.getIsFavourite());
+
+                    observationDAO.updateObservation(observation);
+
+                    button.setText(observation.getIsFavourite() ? "★" : "☆");
+                });
+            }
+
+            @Override
+            protected void updateItem(Boolean favourite, boolean empty) {
+                super.updateItem(favourite, empty);
+
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    Observation observation = getTableView().getItems().get(getIndex());
+                    button.setText(observation.getIsFavourite() ? "★" : "☆");
+                    setGraphic(button);
+                }
+            }
+        });
+
+
 
         locationAutocomplete = new LocationAutocomplete(locationTextField, new PlacesService());
 
@@ -283,6 +331,7 @@ public class ObservationController {
         final String DEFAULT_ANIMAL = "Unknown";
         final String DEFAULT_STATUS = "No";
         final LocalDate DEFAULT_DATE = LocalDate.now();
+        final Boolean DEFAULT_F_STATUS = false;
 
         Observation newObservation = new Observation(
                 currentAccount,
@@ -291,7 +340,8 @@ public class ObservationController {
                 null,
                 DEFAULT_ANIMAL,
                 DEFAULT_STATUS,
-                DEFAULT_DATE
+                DEFAULT_DATE,
+                DEFAULT_F_STATUS
         );
 
         observationDAO.addObservation(newObservation);
@@ -364,5 +414,57 @@ public class ObservationController {
     private void onExport() {
         observationDAO.exportObservations();
         ExportSuccessMsg.setText("Data Successfully Exported");
+    }
+
+    @FXML
+    private void onChooseImage() {
+        FileChooser fileChooser = new FileChooser();
+
+        fileChooser.setTitle("Choose Observation Image");
+
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter(
+                        "Image Files",
+                        "*.png",
+                        "*.jpg",
+                        "*.jpeg",
+                        "*.gif"
+                )
+        );
+
+        Window window = observationsTableView.getScene().getWindow();
+
+        File file = fileChooser.showOpenDialog(window);
+
+        if (file != null) {
+            selectedImage = file;
+            imageLabel.setText(file.getName());
+        }
+    }
+
+    @FXML
+    private void onChooseVideo() {
+        FileChooser fileChooser = new FileChooser();
+
+        fileChooser.setTitle("Choose Observation Video");
+
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter(
+                        "Video Files",
+                        "*.mp4",
+                        "*.mov",
+                        "*.avi",
+                        "*.mkv"
+                )
+        );
+
+        Window window = observationsTableView.getScene().getWindow();
+
+        File file = fileChooser.showOpenDialog(window);
+
+        if (file != null) {
+            selectedVideo = file;
+            videoLabel.setText(file.getName());
+        }
     }
 }

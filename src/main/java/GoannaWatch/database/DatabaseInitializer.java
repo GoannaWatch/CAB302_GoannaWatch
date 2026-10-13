@@ -11,7 +11,7 @@ import java.sql.Statement;
  */
 public class DatabaseInitializer {
 
-    private static final int CURRENT_DATABASE_VERSION = 3;
+    private static final int CURRENT_DATABASE_VERSION = 4;
 
     /**
      * Creates the database tables and applies any required migrations.
@@ -55,6 +55,16 @@ public class DatabaseInitializer {
                     migrateToVersion3(connection);
                     setDatabaseVersion(connection, 3);
                     version = 3;
+                }
+
+                /*
+                Version 3:
+                Add favourite status to observations.
+                */
+                if (version < 4) {
+                    migrateToVersion4(connection);
+                    setDatabaseVersion(connection, 4);
+                    version = 4;
                 }
 
                 /*
@@ -203,6 +213,20 @@ public class DatabaseInitializer {
             }
         }
     }
+
+    private static void migrateToVersion4(Connection connection) throws SQLException {
+        if (!columnExists(connection, "observations", "is_favourite")) {
+            String sql = """
+                ALTER TABLE observations
+                ADD COLUMN is_favourite INTEGER NOT NULL DEFAULT 0
+                """;
+
+            try (Statement statement = connection.createStatement()) {
+                statement.executeUpdate(sql);
+            }
+        }
+    }
+
 
     /**
      * Checks whether a table contains a particular column.

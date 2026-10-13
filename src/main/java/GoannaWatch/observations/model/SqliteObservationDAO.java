@@ -1,6 +1,9 @@
 package GoannaWatch.observations.model;
 
 import GoannaWatch.database.DatabaseConnection;
+import GoannaWatch.account.model.Account;
+import GoannaWatch.account.model.SqliteAccountDAO;
+import GoannaWatch.database.DatabaseInitializer;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,17 +11,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import GoannaWatch.account.model.Account;
-import GoannaWatch.account.model.SqliteAccountDAO;
-import GoannaWatch.database.DatabaseInitializer;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
-
-import java.time.LocalDate;
 
 /**
  * Saves and reads wildlife observations in SQLite.
@@ -31,10 +30,18 @@ public class SqliteObservationDAO implements IObservationDAO{
     @Override
     public void addObservation(Observation observation) {
         String sql = """
-            INSERT INTO observations
-            (observer_id, location, latitude, longitude, animal_seen, is_endangered, observed_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-            """;
+                INSERT INTO observations
+                (observer_id, 
+                 location, 
+                 latitude,
+                 longitude,
+                 animal_seen, 
+                 is_endangered, 
+                 observed_at,
+                 is_favourite
+                 )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """;
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(
@@ -47,6 +54,7 @@ public class SqliteObservationDAO implements IObservationDAO{
             statement.setString(5, observation.getAnimalSeen());
             statement.setString(6, observation.getIsEndangered());
             statement.setString(7, observation.getObservedAt().toString());
+            statement.setBoolean(8, observation.getIsFavourite());
 
             statement.executeUpdate();
 
@@ -91,7 +99,8 @@ public class SqliteObservationDAO implements IObservationDAO{
                             getNullableDouble(result, "longitude"),
                             result.getString("animal_seen"),
                             result.getString("is_endangered"),
-                            LocalDate.parse(result.getString("observed_at"))
+                            LocalDate.parse(result.getString("observed_at")),
+                            result.getBoolean("is_favourite")
                     );
 
                     observation.setId(result.getInt("id"));
@@ -111,7 +120,7 @@ public class SqliteObservationDAO implements IObservationDAO{
         String sql = """
                 UPDATE observations
                 SET location = ?, latitude = ?, longitude = ?, 
-                    animal_seen = ?, is_endangered = ?, observed_at = ?
+                    animal_seen = ?, is_endangered = ?, observed_at = ?, is_favourite = ?
                 WHERE id = ?
                 """;
 
@@ -124,7 +133,8 @@ public class SqliteObservationDAO implements IObservationDAO{
             statement.setString(4, observation.getAnimalSeen());
             statement.setString(5, observation.getIsEndangered());
             statement.setString(6, observation.getObservedAt().toString());
-            statement.setInt(7, observation.getId());
+            statement.setBoolean(7, observation.getIsFavourite());
+            statement.setInt(8, observation.getId());
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -168,7 +178,8 @@ public class SqliteObservationDAO implements IObservationDAO{
                                 + observation.getLatitude() + ", " + observation.getLongitude() + ") | "
                                 + observation.getAnimalSeen() + " | "
                                 + observation.getIsEndangered() + " | "
-                                + observation.getObservedAt()
+                                + observation.getObservedAt() + " | "
+                                + observation.getIsFavourite()
                 );
             }
         } catch (SQLException e) {
@@ -205,7 +216,8 @@ public class SqliteObservationDAO implements IObservationDAO{
                         getNullableDouble(result, "longitude"),
                         result.getString("animal_seen"),
                         result.getString("is_endangered"),
-                        LocalDate.parse(result.getString("observed_at"))
+                        LocalDate.parse(result.getString("observed_at")),
+                        result.getBoolean("is_favourite")
                 );
 
                 observation.setId(result.getInt("id"));
@@ -250,7 +262,8 @@ public class SqliteObservationDAO implements IObservationDAO{
                             getNullableDouble(result, "longitude"),
                             result.getString("animal_seen"),
                             result.getString("is_endangered"),
-                            LocalDate.parse(result.getString("observed_at"))
+                            LocalDate.parse(result.getString("observed_at")),
+                            result.getBoolean("is_favourite")
                     );
 
                     observation.setId(result.getInt("id"));
