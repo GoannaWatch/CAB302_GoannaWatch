@@ -25,12 +25,16 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
+import GoannaWatch.observations.model.Comment;
+import GoannaWatch.observations.model.SqliteCommentDAO;
+
 /**
  * The controller class for the Observation view of the GoannaWatch application. This class handles the user interactions in the Observation view.
  */
 public class ObservationController {
 
     private final SqliteObservationDAO observationDAO;
+    private final SqliteCommentDAO commentDAO = new SqliteCommentDAO();
 
     @FXML
     private Label ExportSuccessMsg;
@@ -100,6 +104,15 @@ public class ObservationController {
     @FXML
     private Button cancelButton;
 
+    @FXML
+    private TextArea commentsArea;
+
+    @FXML
+    private TextArea commentTextArea;
+
+    @FXML
+    private VBox commentForm;
+
     private final ObservableList<Observation> masterObservations = FXCollections.observableArrayList();
 
     private FilteredList<Observation> filteredObservations;
@@ -162,6 +175,68 @@ public class ObservationController {
         }
 
         datePicker.setValue(observation.getObservedAt());
+
+        // Only experts can write comments.
+        boolean expert = account != null && account.isExpert();
+        commentForm.setVisible(expert);
+        commentForm.setManaged(expert);
+
+        commentTextArea.clear();
+        loadComments(observation.getId());
+    }
+
+    /**
+     * Displays the comments for the selected observation.
+     *
+     * @param observationId The ID of the observation.
+     */
+    private void loadComments(int observationId) {
+        commentsArea.clear();
+
+        try {
+            List<Comment> comments =
+                    commentDAO.getCommentsByObservation(observationId);
+
+            for (Comment comment : comments) {
+                commentsArea.appendText(
+                        comment.getAuthor().getFullName() + ": "
+                                + comment.getText() + "\n\n"
+                );
+            }
+        } catch (RuntimeException e) {
+            showAlert("Could not load comments.");
+            System.err.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Adds a comment to the selected observation.
+     */
+    @FXML
+    private void onAddComment() {
+        Observation selected = observationsTableView.getSelectionModel().getSelectedItem();
+
+        if (selected == null) {
+            return;
+        }
+
+        try {
+            Comment comment = new Comment(
+                    selected.getId(),
+                    Session.getCurrentAccount(),
+                    commentTextArea.getText().trim()
+            );
+
+            commentDAO.addComment(comment);
+            commentTextArea.clear();
+            loadComments(selected.getId());
+
+        } catch (InputMismatchException | SecurityException e) {
+            showAlert(e.getMessage());
+        } catch (RuntimeException e) {
+            showAlert("Could not save comment.");
+            System.err.println(e.getMessage());
+        }
     }
 
     /**
