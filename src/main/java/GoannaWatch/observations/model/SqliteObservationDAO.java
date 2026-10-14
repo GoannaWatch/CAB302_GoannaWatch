@@ -106,6 +106,12 @@ public class SqliteObservationDAO implements IObservationDAO{
                     );
 
                     observation.setId(result.getInt("id"));
+
+                    observation.setIsFavourite(
+                            Session.getCurrentAccount() != null
+                                    && new SqliteFavouriteDAO().isFavourite(observation.getId())
+                    );
+
                     return observation;
                 }
             }
@@ -143,7 +149,7 @@ public class SqliteObservationDAO implements IObservationDAO{
         String sql = """
                 UPDATE observations
                 SET location = ?, latitude = ?, longitude = ?, 
-                    animal_seen = ?, is_endangered = ?, observed_at = ?, is_favourite = ?
+                    animal_seen = ?, is_endangered = ?, observed_at = ?
                 WHERE id = ?
                 """;
 
@@ -156,8 +162,7 @@ public class SqliteObservationDAO implements IObservationDAO{
             statement.setString(4, observation.getAnimalSeen());
             statement.setString(5, observation.getIsEndangered());
             statement.setString(6, observation.getObservedAt().toString());
-            statement.setBoolean(7, observation.getIsFavourite());
-            statement.setInt(8, observation.getId());
+            statement.setInt(7, observation.getId());
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -262,6 +267,12 @@ public class SqliteObservationDAO implements IObservationDAO{
                 );
 
                 observation.setId(result.getInt("id"));
+
+                observation.setIsFavourite(
+                        Session.getCurrentAccount() != null
+                            && new SqliteFavouriteDAO().isFavourite(observation.getId())
+                );
+
                 observations.add(observation);
             }
         } catch (SQLException e) {
@@ -308,6 +319,12 @@ public class SqliteObservationDAO implements IObservationDAO{
                     );
 
                     observation.setId(result.getInt("id"));
+
+                    observation.setIsFavourite(
+                            Session.getCurrentAccount() != null
+                                    && new SqliteFavouriteDAO().isFavourite(observation.getId())
+                    );
+
                     observations.add(observation);
                 }
             }

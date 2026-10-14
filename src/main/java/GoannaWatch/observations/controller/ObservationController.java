@@ -35,6 +35,7 @@ public class ObservationController {
 
     private final SqliteObservationDAO observationDAO;
     private final SqliteCommentDAO commentDAO = new SqliteCommentDAO();
+    private final SqliteFavouriteDAO favouriteDAO = new SqliteFavouriteDAO();
 
     @FXML
     private Label ExportSuccessMsg;
@@ -262,12 +263,21 @@ public class ObservationController {
                 button.setOnAction(event -> {
                     Observation observation = getTableView().getItems().get(getIndex());
 
-                    observation.setIsFavourite(!observation.getIsFavourite());
+                    boolean nextFavourite = !observation.getIsFavourite();
 
-                    observationDAO.updateObservation(observation);
+                    try {
+                        favouriteDAO.setFavourite(observation.getId(), nextFavourite);
 
-                    button.setText(observation.getIsFavourite() ? "★" : "☆");
+                        observation.setIsFavourite(nextFavourite);
+
+                        button.setText(nextFavourite ? "★" : "☆");
+
+                    } catch (RuntimeException e) {
+                        showAlert("Could not update favourite: " + e.getMessage());
+                    }
+
                 });
+
             }
 
             @Override

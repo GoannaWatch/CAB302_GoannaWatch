@@ -11,7 +11,7 @@ import java.sql.Statement;
  */
 public class DatabaseInitializer {
 
-    private static final int CURRENT_DATABASE_VERSION = 6;
+    private static final int CURRENT_DATABASE_VERSION = 7;
 
     /**
      * Creates the database tables and applies any required migrations.
@@ -85,6 +85,16 @@ public class DatabaseInitializer {
                     migrateToVersion6(connection);
                     setDatabaseVersion(connection, 6);
                     version = 6;
+                }
+
+                /*
+                Version 7:
+                Store favourites separately for each account.
+                 */
+                if (version < 7) {
+                    migrateToVersion7(connection);
+                    setDatabaseVersion(connection, 7);
+                    version = 7;
                 }
 
                 /*
@@ -288,6 +298,33 @@ public class DatabaseInitializer {
                     ON DELETE CASCADE,
                 FOREIGN KEY (author_id) REFERENCES accounts(id)
             )
+            """;
+
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate(sql);
+        }
+    }
+
+    /**
+     * Version 7:
+     * Store favourites separately for each account.
+     *
+     * Each account can favourite multiple observations.
+     * Each observation can be favourited by multiple accounts.
+     */
+    private static void migrateToVersion7(Connection connection)
+            throws SQLException {
+
+        String sql = """
+            CREATE TABLE IF NOT EXISTS account_favourites (
+                account_id INTEGER NOT NULL,
+                observation_id INTEGER NOT NULL,
+                PRIMARY KEY (account_id, observation_id),
+                FOREIGN KEY (account_id) REFERENCES accounts(id)
+                    ON DELETE CASCADE,
+                FOREIGN KEY (observation_id) REFERENCES observations(id)
+                    ON DELETE CASCADE
+            )    
             """;
 
         try (Statement statement = connection.createStatement()) {
