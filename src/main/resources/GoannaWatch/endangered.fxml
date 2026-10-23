@@ -32,7 +32,6 @@
                     <TableColumn fx:id="observerColumn" text="Observer" />
                     <TableColumn fx:id="locationColumn" text="Location" />
                     <TableColumn fx:id="animalColumn" text="Animal" />
-                    <TableColumn fx:id="endangerColumn" text="Endangered" />
                     <TableColumn fx:id="dateColumn" text="Date" />
                     <TableColumn fx:id="favouriteColumn" text="Favourite" />
                 </columns>

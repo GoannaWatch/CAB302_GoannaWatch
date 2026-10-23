@@ -33,6 +33,7 @@
                     <TableColumn fx:id="animalColumn" text="Animal" />
                     <TableColumn fx:id="endangerColumn" text="Endangered" />
                     <TableColumn fx:id="dateColumn" text="Date" />
+                    <TableColumn fx:id="favouriteColumn" text="Favourite" />
                 </columns>
             </TableView>
         </VBox>

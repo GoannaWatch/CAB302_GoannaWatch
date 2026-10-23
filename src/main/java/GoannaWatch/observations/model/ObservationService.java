@@ -154,4 +154,29 @@ public class ObservationService {
         return observations;
     }
 
+    /**
+     * Returns the observations the viewer has favourited.
+     * @param viewer the account whose favourites to return
+     * @return the viewer's favourite observations
+     */
+    public List<Observation> getFavourites(Account viewer) {
+        if (viewer == null) {
+            return List.of();
+        }
+        return getAll(viewer).stream()
+                .filter(Observation::getIsFavourite)
+                .toList();
+    }
+
+    /**
+     * Returns observations of endangered animals.
+     * @param viewer the account viewing the list
+     * @return the endangered observations
+     */
+    public List<Observation> getEndangered(Account viewer) {
+        return getAll(viewer).stream()
+                .filter(o -> "Yes".equalsIgnoreCase(o.getIsEndangered()))
+                .toList();
+    }
+
 }

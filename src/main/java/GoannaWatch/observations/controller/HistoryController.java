@@ -5,6 +5,7 @@ import GoannaWatch.account.controller.NavBarController;
 import GoannaWatch.account.model.*;
 import GoannaWatch.observations.model.*;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -130,7 +131,6 @@ public class HistoryController {
      * Initialises the controller class. This method is automatically called after the .fxml file has been loaded.
      */
 
-    //TODO Create Notification popups using AtlantaFX for edit, delete, and Add, for action confirmation.
     public HistoryController() {
         this(new ObservationService(
                 new SqliteObservationDAO(),
@@ -267,40 +267,9 @@ public class HistoryController {
                 new SimpleStringProperty(cellData.getValue().getIsEndangered()));
         dateColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getObservedAt().toString()));
-        favouriteColumn.setCellFactory(column -> new TableCell<Observation, Boolean>() {
-
-            private final Button button = new Button("Favourite");
-
-            {
-                button.setOnAction(event -> {
-                    Observation observation = getTableView().getItems().get(getIndex());
-
-                    boolean nextFavourite = !observation.getIsFavourite();
-
-                    try {
-                        service.setFavourite(observation, Session.getCurrentAccount(), nextFavourite);
-                        button.setText(nextFavourite ? "★" : "☆");
-                    } catch (RuntimeException e) {
-                        showAlert("Could not update favourite: " + e.getMessage());
-                    }
-
-                });
-
-            }
-
-            @Override
-            protected void updateItem(Boolean favourite, boolean empty) {
-                super.updateItem(favourite, empty);
-
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    Observation observation = getTableView().getItems().get(getIndex());
-                    button.setText(observation.getIsFavourite() ? "★" : "☆");
-                    setGraphic(button);
-                }
-            }
-        });
+        favouriteColumn.setCellValueFactory(cellData ->
+                new SimpleBooleanProperty(cellData.getValue().getIsFavourite()));
+        favouriteColumn.setCellFactory(col -> new FavouriteStarCell(service, o -> { }));
 
 
 
@@ -370,7 +339,6 @@ public class HistoryController {
 
     /**
      * Filters objects based on searchTextField for animal or location.
-     * // TODO Extend so that filters Account and Date as well.
      */
     private void applyFilter() {
         String query = searchTextField.getText();
