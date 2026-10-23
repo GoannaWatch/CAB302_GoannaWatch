@@ -1,4 +1,4 @@
-package GoannaWatch.account.controller;
+package GoannaWatch.account.model;
 
 import GoannaWatch.App;
 import javafx.fxml.FXMLLoader;

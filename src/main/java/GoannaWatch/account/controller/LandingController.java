@@ -1,6 +1,7 @@
 package GoannaWatch.account.controller;
 
 import GoannaWatch.account.model.Account;
+import GoannaWatch.account.model.Navigator;
 import GoannaWatch.account.model.Session;
 import GoannaWatch.observations.model.*;
 import javafx.fxml.FXML;

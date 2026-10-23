@@ -86,8 +86,6 @@ public class SqliteFavouriteDAOTest {
      */
     @AfterEach
     void tearDown() {
-        Session.clear();
-
         if (oldUrl == null) {
             System.clearProperty("goannawatch.db.url");
         } else {
@@ -100,11 +98,7 @@ public class SqliteFavouriteDAOTest {
      */
     @Test
     void testNewObservationIsNotFavourite() {
-        Session.setCurrentAccount(owner);
-
-        assertFalse(
-                favouriteDAO.isFavourite(observation.getId())
-        );
+        assertFalse(favouriteDAO.isFavourite(owner, observation.getId()));
     }
 
     /**
@@ -112,13 +106,9 @@ public class SqliteFavouriteDAOTest {
      */
     @Test
     void testAddFavourite() {
-        Session.setCurrentAccount(owner);
+        favouriteDAO.setFavourite(owner, observation.getId(), true);
 
-        favouriteDAO.setFavourite(observation.getId(), true);
-
-        assertTrue(
-                favouriteDAO.isFavourite(observation.getId())
-        );
+        assertTrue(favouriteDAO.isFavourite(owner, observation.getId()));
     }
 
     /**
@@ -126,19 +116,11 @@ public class SqliteFavouriteDAOTest {
      */
     @Test
     void testRemoveFavourite() {
-        Session.setCurrentAccount(owner);
+        favouriteDAO.setFavourite(owner, observation.getId(), true);
+        assertTrue(favouriteDAO.isFavourite(owner, observation.getId()));
 
-        favouriteDAO.setFavourite(observation.getId(), true);
-
-        assertTrue(
-                favouriteDAO.isFavourite(observation.getId())
-        );
-
-        favouriteDAO.setFavourite(observation.getId(), false);
-
-        assertFalse(
-                favouriteDAO.isFavourite(observation.getId())
-        );
+        favouriteDAO.setFavourite(owner, observation.getId(), false);
+        assertFalse(favouriteDAO.isFavourite(owner, observation.getId()));
     }
 
     /**
@@ -147,44 +129,19 @@ public class SqliteFavouriteDAOTest {
      */
     @Test
     void testFavouritesAreUserSpecific() {
-        Session.setCurrentAccount(owner);
-        favouriteDAO.setFavourite(observation.getId(), true);
+        favouriteDAO.setFavourite(owner, observation.getId(), true);
 
-        assertTrue(
-                favouriteDAO.isFavourite(observation.getId())
-        );
+        assertTrue(favouriteDAO.isFavourite(owner, observation.getId()));
+        assertFalse(favouriteDAO.isFavourite(otherUser, observation.getId()));
 
-        Session.setCurrentAccount(otherUser);
+        favouriteDAO.setFavourite(otherUser, observation.getId(), true);
+        assertTrue(favouriteDAO.isFavourite(otherUser, observation.getId()));
 
-        assertFalse(
-                favouriteDAO.isFavourite(observation.getId())
-        );
+        // Removing the owner's favourite must not remove the other user's.
+        favouriteDAO.setFavourite(owner, observation.getId(), false);
 
-        favouriteDAO.setFavourite(observation.getId(), true);
-
-        assertTrue(
-                favouriteDAO.isFavourite(observation.getId())
-        );
-
-        Session.setCurrentAccount(owner);
-
-        assertTrue(
-                favouriteDAO.isFavourite(observation.getId())
-        );
-
-        // Removing owner's favourite must not remove the other users favourite
-        favouriteDAO.setFavourite(observation.getId(), false);
-
-        assertFalse(
-                favouriteDAO.isFavourite(observation.getId())
-        );
-
-        Session.setCurrentAccount(otherUser);
-
-        assertTrue(
-                favouriteDAO.isFavourite(observation.getId())
-        );
-
+        assertFalse(favouriteDAO.isFavourite(owner, observation.getId()));
+        assertTrue(favouriteDAO.isFavourite(otherUser, observation.getId()));
     }
 
     /**
@@ -192,25 +149,9 @@ public class SqliteFavouriteDAOTest {
      */
     @Test
     void testFavouritePersistsAcrossSession() {
-        Session.setCurrentAccount(owner);
+        favouriteDAO.setFavourite(owner, observation.getId(), true);
 
-        favouriteDAO.setFavourite(observation.getId(), true);
-
-        assertTrue(
-                favouriteDAO.isFavourite(observation.getId())
-        );
-
-        //Simulator logging out.
-        Session.clear();
-
-        // Simulate logging back into same account
-        Session.setCurrentAccount(owner);
-
-        SqliteFavouriteDAO newDAO = new SqliteFavouriteDAO();
-
-        assertTrue(
-                newDAO.isFavourite(observation.getId())
-        );
+        assertTrue(new SqliteFavouriteDAO().isFavourite(owner, observation.getId()));
 
     }
 
@@ -219,13 +160,11 @@ public class SqliteFavouriteDAOTest {
      */
     @Test
     void testAddingSameFavouriteTwiceDoesNotDuplicate() throws SQLException {
-        Session.setCurrentAccount(owner);
-
-        favouriteDAO.setFavourite(observation.getId(), true);
-        favouriteDAO.setFavourite(observation.getId(), true);
+        favouriteDAO.setFavourite(owner, observation.getId(), true);
+        favouriteDAO.setFavourite(owner, observation.getId(), true);
 
         assertTrue(
-                favouriteDAO.isFavourite(observation.getId())
+                favouriteDAO.isFavourite(owner, observation.getId())
         );
 
         String sql = """
@@ -237,7 +176,7 @@ public class SqliteFavouriteDAOTest {
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement =
-                connection.prepareStatement(sql)) {
+                     connection.prepareStatement(sql)) {
 
             statement.setInt(1, owner.getId());
             statement.setInt(2, observation.getId());
@@ -249,76 +188,25 @@ public class SqliteFavouriteDAOTest {
                         result.getInt(1),
                         "The same favourite should only be stored once."
                 );
-
             }
-
         }
-
     }
 
     /**
      * Users must be logged in before accessing or modifying their favourites
      */
-    @Test
-    void testUnauthenticatedUserCannotAccessFavourites() {
-        Session.clear();
-
-        SecurityException readException = assertThrows(
-                SecurityException.class,
-                () -> favouriteDAO.isFavourite(observation.getId())
-        );
-
-        assertEquals(
-                "Please log in first.",
-                readException.getMessage()
-        );
-
-        SecurityException addException = assertThrows(
-                SecurityException.class,
-                () -> favouriteDAO.setFavourite(
-                        observation.getId(), true
-                )
-        );
-
-        assertEquals(
-                "Please log in first.",
-                addException.getMessage()
-        );
-
-        SecurityException removeException = assertThrows(
-                SecurityException.class,
-                () -> favouriteDAO.setFavourite(
-                        observation.getId(), false
-                )
-        );
-
-        assertEquals(
-                "Please log in first.",
-                removeException.getMessage()
-        );
-
-    }
 
     /**
      * Deleting an observation must remove all favourites associated with that observation
      */
     @Test
     void testDeletingObservationRemovesAssociatedFavourites() throws SQLException {
-
-        // First account favourites the observation
-        Session.setCurrentAccount(owner);
-        favouriteDAO.setFavourite(observation.getId(), true);
-
-        // Second account favourites the same observation.
-        Session.setCurrentAccount(otherUser);
-        favouriteDAO.setFavourite(observation.getId(), true);
+        favouriteDAO.setFavourite(owner, observation.getId(), true);
+        favouriteDAO.setFavourite(otherUser, observation.getId(), true);
 
         assertTrue(
-                favouriteDAO.isFavourite(observation.getId())
+                favouriteDAO.isFavourite(otherUser, observation.getId())
         );
-
-        // Switch back to owner to delete
-        Session.setCurrentAccount(owner);
 
         SqliteObservationDAO observationDAO = new SqliteObservationDAO();
 
@@ -349,10 +237,5 @@ public class SqliteFavouriteDAOTest {
                 );
             }
         }
-
-
     }
-
-
-
 }

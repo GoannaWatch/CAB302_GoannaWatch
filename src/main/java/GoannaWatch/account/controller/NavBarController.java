@@ -2,6 +2,7 @@ package GoannaWatch.account.controller;
 
 import GoannaWatch.App;
 import GoannaWatch.account.model.Account;
+import GoannaWatch.account.model.Navigator;
 import GoannaWatch.account.model.Session;
 import atlantafx.base.controls.ToggleSwitch;
 import javafx.fxml.FXML;

@@ -1,16 +1,9 @@
 package GoannaWatch.account.controller;
 
-import GoannaWatch.App;
-import GoannaWatch.account.model.Account;
-import GoannaWatch.account.model.IAccountDAO;
-import GoannaWatch.account.model.Session;
-import GoannaWatch.account.model.SqliteAccountDAO;
+import GoannaWatch.account.model.*;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.InputMismatchException;
