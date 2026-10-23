@@ -107,11 +107,6 @@ public class SqliteObservationDAO implements IObservationDAO{
 
                     observation.setId(result.getInt("id"));
 
-                    observation.setIsFavourite(
-                            Session.getCurrentAccount() != null
-                                    && new SqliteFavouriteDAO().isFavourite(observation.getId())
-                    );
-
                     return observation;
                 }
             }
@@ -268,11 +263,6 @@ public class SqliteObservationDAO implements IObservationDAO{
 
                 observation.setId(result.getInt("id"));
 
-                observation.setIsFavourite(
-                        Session.getCurrentAccount() != null
-                            && new SqliteFavouriteDAO().isFavourite(observation.getId())
-                );
-
                 observations.add(observation);
             }
         } catch (SQLException e) {
@@ -319,12 +309,6 @@ public class SqliteObservationDAO implements IObservationDAO{
                     );
 
                     observation.setId(result.getInt("id"));
-
-                    observation.setIsFavourite(
-                            Session.getCurrentAccount() != null
-                                    && new SqliteFavouriteDAO().isFavourite(observation.getId())
-                    );
-
                     observations.add(observation);
                 }
             }

@@ -3,11 +3,7 @@ package GoannaWatch.observations.controller;
 import GoannaWatch.account.controller.NavBarController;
 import GoannaWatch.account.model.Account;
 import GoannaWatch.account.model.Session;
-import GoannaWatch.observations.model.IObservationDAO;
-import GoannaWatch.observations.model.Observation;
-import GoannaWatch.observations.model.Place;
-import GoannaWatch.observations.model.PlacesService;
-import GoannaWatch.observations.model.SqliteObservationDAO;
+import GoannaWatch.observations.model.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
@@ -45,6 +41,19 @@ public class RecordObservationController {
 
     @FXML
     private Label statusLabel;
+
+    private final ObservationService service;
+
+    public RecordObservationController() {
+        this(new ObservationService(
+                new SqliteObservationDAO(),
+                new SqliteCommentDAO(),
+                new SqliteFavouriteDAO()));
+    }
+
+    RecordObservationController(ObservationService service) {
+        this.service = service;
+    }
 
     @FXML
     public void initialize() {

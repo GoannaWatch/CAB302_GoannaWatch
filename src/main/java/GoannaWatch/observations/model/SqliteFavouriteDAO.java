@@ -8,28 +8,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import java.util.HashSet;
+import java.util.Set;
 /**
  * Manages personal observation favourites.
  * Each favourite belongs to an individual account.
  */
 public class SqliteFavouriteDAO implements IFavouriteDAO{
 
-    /**
-     * Returns the ID of the currently logged in account.
-     */
-    private int currentAccountId() {
-        Account current = Session.getCurrentAccount();
-
-        if (current == null) {
-            throw new SecurityException("Please log in first.");
-        }
-        return current.getId();
-    }
-
     @Override
-    public boolean isFavourite(int observationId) {
-        int accountId = currentAccountId();
+    public boolean isFavourite(Account account, int observationId) {
 
         String sql = """
                 SELECT 1
@@ -41,7 +29,7 @@ public class SqliteFavouriteDAO implements IFavouriteDAO{
         try (Connection connection = DatabaseConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setInt(1, accountId);
+            statement.setInt(1, account.getId());
             statement.setInt(2, observationId);
 
             try (ResultSet result = statement.executeQuery()) {
@@ -53,8 +41,7 @@ public class SqliteFavouriteDAO implements IFavouriteDAO{
     }
 
     @Override
-    public void setFavourite(int observationId, boolean favourite) {
-        int accountId = currentAccountId();
+    public void setFavourite(Account account, int observationId, boolean favourite) {
 
         String sql = favourite
                 ?   """
@@ -71,7 +58,7 @@ public class SqliteFavouriteDAO implements IFavouriteDAO{
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setInt(1, accountId);
+            statement.setInt(1, account.getId());
             statement.setInt(2, observationId);
 
             statement.executeUpdate();
@@ -79,6 +66,27 @@ public class SqliteFavouriteDAO implements IFavouriteDAO{
         } catch (SQLException e) {
             throw new RuntimeException("Failed to save favourite.", e);
         }
+    }
+
+    @Override
+    public Set<Integer> getFavouriteObservationIds(Account account) {
+        String sql = "SELECT observation_id FROM account_favourites WHERE account_id = ?";
+        Set<Integer> ids = new HashSet<>();
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, account.getId());
+
+            try (ResultSet result = statement.executeQuery()) {
+                while (result.next()) {
+                    ids.add(result.getInt("observation_id"));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to load favourites.", e);
+        }
+        return ids;
     }
 
 }

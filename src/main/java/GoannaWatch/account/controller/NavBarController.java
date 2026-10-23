@@ -5,10 +5,12 @@ import GoannaWatch.account.model.Account;
 import GoannaWatch.account.model.Session;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -28,6 +30,9 @@ public class NavBarController {
 
     @FXML
     private Button usersButton;
+
+    @FXML
+    private HBox navButtons;
 
     /**
      * Sets the theme button's text and shows "Manage Users" only for experts.
@@ -115,6 +120,22 @@ public class NavBarController {
         Stage stage = (Stage) logoutButton.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxmlName));
         stage.setScene(new Scene(fxmlLoader.load()));
+    }
+
+    /**
+     * Highlights the navigation button for the page being shown.
+     *
+     * @param page the button's userData
+     */
+    public void setActivePage(String page) {
+        for (Node node : navButtons.getChildren()) {
+            if (node instanceof Button button) {
+                button.getStyleClass().remove("accent");
+                if (page.equals(button.getUserData())) {
+                    button.getStyleClass().add("accent");
+                }
+            }
+        }
     }
 
 }

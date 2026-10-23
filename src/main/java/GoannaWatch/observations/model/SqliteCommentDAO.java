@@ -1,7 +1,6 @@
 package GoannaWatch.observations.model;
 
 import GoannaWatch.account.model.Account;
-import GoannaWatch.account.model.Session;
 import GoannaWatch.database.DatabaseConnection;
 
 import java.sql.Connection;
@@ -20,13 +19,6 @@ public class SqliteCommentDAO implements ICommentDAO{
 
     @Override
     public void addComment(Comment comment) {
-        Account account = Session.getCurrentAccount();
-
-        // Only experts can add comments.
-        if (account == null || !account.isExpert()) {
-            throw new SecurityException("Only experts can add comments.");
-        }
-
         String sql = """
                 INSERT INTO comments
                 (observation_id, author_id, text)
@@ -37,7 +29,7 @@ public class SqliteCommentDAO implements ICommentDAO{
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, comment.getObservationId());
-            statement.setInt(2, account.getId());
+            statement.setInt(2, comment.getAuthor().getId());
             statement.setString(3, comment.getText());
 
             statement.executeUpdate();

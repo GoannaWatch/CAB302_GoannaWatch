@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
 <VBox id="contentContainer"
       prefHeight="800"
@@ -14,76 +14,68 @@
 
     <fx:include fx:id="navBar" source="navbar.fxml" />
 
-    <VBox alignment="CENTER" spacing="4">
-        <Label fx:id="welcomeLabel"
-               alignment="CENTER"
-               style="-fx-font-size: 26px; -fx-font-weight: bold;"
-               text="Welcome!"
-               textAlignment="CENTER"
-               wrapText="true"/>
-        <Label fx:id="emailLabel" text="" />
-    </VBox>
+    <VBox spacing="15">
+        <padding>
+            <Insets top="15" right="20" bottom="20" left="20" />
+        </padding>
 
-    <GridPane alignment="TOP_CENTER"
-              hgap="10"
-              vgap="10">
-
-        <VBox alignment="TOP_CENTER">
-            <HBox>
-                <VBox id="pageContent">
-                    <Label text="Recent Observations">
-                        <font>
-                            <Font name="System Bold"
-                                  size="12.0" />
-                        </font>
-                    </Label>
-
-                    <Label text="Observation 1" />
-                    <Label text="Observation 2" />
-                    <Label text="Observation 3" />
-                    <Label text="Observation 4" />
-                </VBox>
-
-                <VBox id="contentContainer">
-                    <VBox id="pageContent">
-                        <Label text="Observation Map Preview">
-                            <font>
-                                <Font name="System Bold"
-                                      size="12.0" />
-                            </font>
-                        </Label>
-                    </VBox>
-
-                    <VBox id="pageContent">
-                        <Label text="Selected Observation">
-                            <font>
-                                <Font name="System Bold"
-                                      size="12.0" />
-                            </font>
-                        </Label>
-                    </VBox>
-                </VBox>
-
-                <VBox id="contentContainer">
-                    <VBox id="pageContent">
-                        <Label text="Quick Actions">
-                            <font>
-                                <Font name="System Bold"
-                                      size="12.0" />
-                            </font>
-                        </Label>
-                    </VBox>
-
-                    <VBox id="pageContent">
-                        <Label text="Wildlife Resources">
-                        <font>
-                            <Font name="System Bold"
-                                  size="12.0" />
-                        </font>
-                        </Label>
-                    </VBox>
-                </VBox>
-            </HBox>
+        <VBox alignment="CENTER" spacing="4">
+            <Label fx:id="welcomeLabel" text="Welcome!"
+                   style="-fx-font-size: 26px; -fx-font-weight: bold;" />
+            <Label fx:id="emailLabel" />
         </VBox>
-    </GridPane>
+
+        <HBox spacing="10">
+            <VBox id="pageContent" styleClass="dash-card" alignment="CENTER" HBox.hgrow="ALWAYS">
+                <Label fx:id="totalLabel" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+                <Label text="Total sightings" />
+            </VBox>
+            <VBox id="pageContent" styleClass="dash-card" alignment="CENTER" HBox.hgrow="ALWAYS">
+                <Label fx:id="mineLabel" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+                <Label text="My sightings" />
+            </VBox>
+            <VBox id="pageContent" styleClass="dash-card" alignment="CENTER" HBox.hgrow="ALWAYS">
+                <Label fx:id="endangeredLabel" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+                <Label text="Endangered sightings" />
+            </VBox>
+            <VBox id="pageContent" styleClass="dash-card" alignment="CENTER" HBox.hgrow="ALWAYS">
+                <Label fx:id="favouritesLabel" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+                <Label text="My favourites" />
+            </VBox>
+        </HBox>
+
+        <HBox spacing="10" VBox.vgrow="ALWAYS">
+
+            <VBox id="pageContent" styleClass="dash-card" spacing="8" HBox.hgrow="ALWAYS">
+                <Label text="Recent Observations" style="-fx-font-weight: bold;" />
+                <ListView fx:id="recentList" VBox.vgrow="ALWAYS" />
+            </VBox>
+
+            <VBox spacing="10" HBox.hgrow="ALWAYS">
+                <VBox id="pageContent" styleClass="dash-card" spacing="8" VBox.vgrow="ALWAYS">
+                    <Label text="Selected Observation" style="-fx-font-weight: bold;" />
+                    <Label fx:id="detailLabel" wrapText="true"
+                           text="Select an observation from the list." />
+                </VBox>
+                <VBox id="pageContent" styleClass="dash-card" spacing="8" VBox.vgrow="ALWAYS">
+                    <Label text="Endangered Sightings" style="-fx-font-weight: bold;" />
+                    <ListView fx:id="endangeredList" VBox.vgrow="ALWAYS" />
+                </VBox>
+            </VBox>
+
+            <VBox spacing="10" prefWidth="200">
+                <VBox id="pageContent" styleClass="dash-card" spacing="8">
+                    <Label text="Quick Actions" style="-fx-font-weight: bold;" />
+                    <Button text="Record an observation" maxWidth="Infinity" onAction="#onQuickRecord" />
+                    <Button text="View my history" maxWidth="Infinity" onAction="#onQuickHistory" />
+                    <Button text="Open map" maxWidth="Infinity" onAction="#onQuickMap" />
+                </VBox>
+                <VBox id="pageContent" styleClass="dash-card" spacing="6">
+                    <Label text="Wildlife Resources" style="-fx-font-weight: bold;" />
+                    <Label text="Atlas of Living Australia" />
+                    <Label text="Queensland Wildlife Hotline" />
+                </VBox>
+            </VBox>
+        </HBox>
+    </VBox>
 </VBox>

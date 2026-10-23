@@ -10,7 +10,6 @@ public interface ICommentDAO {
      * Saves a comment written by the current expert.
      *
      * @param comment The comment to save.
-     * @throws SecurityException If the current account is not an expert.
      */
     void addComment(Comment comment);
 

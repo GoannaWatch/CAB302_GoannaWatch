@@ -26,16 +26,11 @@ import java.time.LocalDate;
 import java.util.*;
 
 import GoannaWatch.observations.model.Comment;
-import GoannaWatch.observations.model.SqliteCommentDAO;
 
 /**
  * The controller class for the Observation view of the GoannaWatch application. This class handles the user interactions in the Observation view.
  */
 public class HistoryController {
-
-    private final SqliteObservationDAO observationDAO;
-    private final ICommentDAO commentDAO = new SqliteCommentDAO();
-    private final IFavouriteDAO favouriteDAO = new SqliteFavouriteDAO();
 
     @FXML
     private Label ExportSuccessMsg;
@@ -129,13 +124,22 @@ public class HistoryController {
 
     private final ObservationExporter exporter = new ObservationExporter();
 
+    private final ObservationService service;
+
     /**
      * Initialises the controller class. This method is automatically called after the .fxml file has been loaded.
      */
 
     //TODO Create Notification popups using AtlantaFX for edit, delete, and Add, for action confirmation.
     public HistoryController() {
-        observationDAO = new SqliteObservationDAO();
+        this(new ObservationService(
+                new SqliteObservationDAO(),
+                new SqliteCommentDAO(),
+                new SqliteFavouriteDAO()));
+    }
+
+    HistoryController(ObservationService service) {
+        this.service = service;
     }
 
     /**
@@ -205,8 +209,7 @@ public class HistoryController {
         commentsArea.clear();
 
         try {
-            List<Comment> comments =
-                    commentDAO.getCommentsByObservation(observationId);
+            List<Comment> comments = service.getComments(observationId);
 
             for (Comment comment : comments) {
                 commentsArea.appendText(
@@ -232,13 +235,10 @@ public class HistoryController {
         }
 
         try {
-            Comment comment = new Comment(
+            service.addComment(
                     selected.getId(),
                     Session.getCurrentAccount(),
-                    commentTextArea.getText().trim()
-            );
-
-            commentDAO.addComment(comment);
+                    commentTextArea.getText().trim());
             commentTextArea.clear();
             loadComments(selected.getId());
 
@@ -256,6 +256,7 @@ public class HistoryController {
     @FXML
     public void initialize() {
         navBarController.setPageTitle("History");
+        navBarController.setActivePage("History");
         observerColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getObserver().getFullName()));
         locationColumn.setCellValueFactory(cellData ->
@@ -277,12 +278,8 @@ public class HistoryController {
                     boolean nextFavourite = !observation.getIsFavourite();
 
                     try {
-                        favouriteDAO.setFavourite(observation.getId(), nextFavourite);
-
-                        observation.setIsFavourite(nextFavourite);
-
+                        service.setFavourite(observation, Session.getCurrentAccount(), nextFavourite);
                         button.setText(nextFavourite ? "★" : "☆");
-
                     } catch (RuntimeException e) {
                         showAlert("Could not update favourite: " + e.getMessage());
                     }
@@ -338,14 +335,12 @@ public class HistoryController {
      * Loads observations from DAO. If ShowMine checkbox toggled, it will on load observations created by current user.
      */
     private void loadObservationsFromDao() {
+        Account current = Session.getCurrentAccount();
         List<Observation> observations;
         if (showMineOnlyCheck.isSelected()) {
-            Account currentAccount = Session.getCurrentAccount();
-            observations = (currentAccount != null)
-                    ? observationDAO.getObservationsByAccount(currentAccount)
-                    : List.of();
+            observations = (current != null) ? service.getMine(current) : List.of();
         } else {
-            observations = observationDAO.getAllObservations();
+            observations = service.getAll(current);
         }
         masterObservations.setAll(observations);
         observationContainer.setVisible(!observations.isEmpty());
@@ -395,19 +390,6 @@ public class HistoryController {
             return;
         }
 
-        Account account = Session.getCurrentAccount();
-
-        if (account == null) {
-            showAlert("Please log in first.");
-            return;
-        }
-
-        // Only the owner or an expert can edit the observation.
-        if (!selected.canBeModifiedBy(account)) {
-            showAlert("You can only edit your own observations.");
-            return;
-        }
-
         try {
             Place place = locationAutocomplete.getSelectedPlace().orElse(null);
             if (place == null) {
@@ -426,7 +408,7 @@ public class HistoryController {
 
             selected.setObservedAt(datePicker.getValue());
 
-            observationDAO.updateObservation(selected);
+            service.update(selected, Session.getCurrentAccount());
             int id = selected.getId();
             loadObservationsFromDao();
             selectById(id);
@@ -449,18 +431,6 @@ public class HistoryController {
             return;
         }
 
-        Account account = Session.getCurrentAccount();
-
-        if (account == null) {
-            showAlert("Please log in first.");
-            return;
-        }
-
-        if (!selected.canBeModifiedBy(account)) {
-            showAlert("You can only delete your own observations.");
-            return;
-        }
-
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Delete Observation");
         alert.setHeaderText(null);
@@ -471,7 +441,7 @@ public class HistoryController {
         }
 
         try {
-            observationDAO.deleteObservation(selected);
+            service.delete(selected, Session.getCurrentAccount());
             loadObservationsFromDao();
         } catch (SecurityException | IllegalArgumentException e) {
             showAlert(e.getMessage());
@@ -515,12 +485,8 @@ public class HistoryController {
     /**
      * Updates species combo box to include all species previously inputted
      */
-    private void updateSpeciesComboBox(){
-        speciesComboBox.getItems().setAll(); // empty list
-        String[] habitatsList = observationsTableView.getItems().stream().map(Observation::getAnimalSeen).distinct().toArray(String[]::new);
-        speciesComboBox.getItems().addAll(habitatsList); // add the current distinct locations from the table
-        speciesComboBox.getItems().removeAll("Unknown");
-        speciesComboBox.getItems().addFirst("Unknown"); // since unknown can be a value in the table, but is also a default value given in the combobox, we reset it here to prevent duplicates
+    private void updateSpeciesComboBox() {
+        speciesComboBox.getItems().setAll(service.getKnownSpecies());
     }
 
     /**

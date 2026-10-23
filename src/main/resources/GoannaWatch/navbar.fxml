@@ -40,23 +40,16 @@
     </HBox>
 
     <HBox id="pageContent" alignment="CENTER">
-        <ButtonBar>
-            <buttons>
-                <Button text="Dashboard" onAction="#onDashboardButtonClick" ButtonBar.buttonUniformSize="true" />
-
-                <MenuButton fx:id="observationsMenu" text="Observations" ButtonBar.buttonUniformSize="true">
-                    <items>
-                        <MenuItem text="Record New Observation" onAction="#onRecordObservationClick" />
-                        <MenuItem text="History" onAction="#onHistoryButtonClick" />
-                        <MenuItem text="Map" onAction="#onMapButtonClick" />
-                    </items>
-                </MenuButton>
-
-                <Button text="Endangered Species" onAction="#onEndangeredButtonClick" ButtonBar.buttonUniformSize="true" />
-                <Button text="Favourites" onAction="#onFavouritesButtonClick" ButtonBar.buttonUniformSize="true" />
-                <Button fx:id="usersButton" text="Manage Users" onAction="#onUsersButtonClick"
-                        visible="false" managed="false" ButtonBar.buttonUniformSize="true" />
-            </buttons>
-        </ButtonBar>
+        <HBox fx:id="navButtons" id="pageContent" alignment="CENTER" spacing="8">
+            <padding><Insets top="8" bottom="8" /></padding>
+            <Button text="Dashboard" userData="Dashboard" onAction="#onDashboardButtonClick" />
+            <Button text="Record" userData="Record" onAction="#onRecordObservationClick" />
+            <Button text="History" userData="History" onAction="#onHistoryButtonClick" />
+            <Button text="Map" userData="Map" onAction="#onMapButtonClick" />
+            <Button text="Endangered" userData="Endangered" onAction="#onEndangeredButtonClick" />
+            <Button text="Favourites" userData="Favourites" onAction="#onFavouritesButtonClick" />
+            <Button fx:id="usersButton" text="Manage Users" userData="Users" onAction="#onUsersButtonClick"
+                    visible="false" managed="false" />
+        </HBox>
     </HBox>
 </VBox>

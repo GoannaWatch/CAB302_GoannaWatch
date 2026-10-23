@@ -38,6 +38,7 @@ public class MapController {
     @FXML
     public void initialize() {
         navBarController.setPageTitle("Map");
+        navBarController.setActivePage("Map");
         loadMap();
     }
 
