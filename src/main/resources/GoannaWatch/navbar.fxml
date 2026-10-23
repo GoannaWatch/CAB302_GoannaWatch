@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="GoannaWatch.account.controller.NavBarController">
+
+    <HBox id="pageContent" alignment="CENTER_LEFT" prefHeight="80.0">
+        <padding>
+            <Insets top="14.0" right="14.0" bottom="14.0" left="14.0" />
+        </padding>
+
+        <Label text="Goanna Watch">
+            <font>
+                <Font name="System Bold" size="18.0" />
+            </font>
+        </Label>
+
+        <Region HBox.hgrow="ALWAYS" />
+
+        <VBox id="contentContainer" alignment="BASELINE_RIGHT">
+            <Label fx:id="pageTitleLabel" alignment="CENTER">
+                <font>
+                    <Font name="System Bold" size="12.0" />
+                </font>
+            </Label>
+
+            <HBox alignment="CENTER_RIGHT" spacing="5">
+                <Hyperlink fx:id="themeButton" text="Light Mode" onAction="#onThemeButtonClick" />
+                <Label text=" | " />
+                <Hyperlink text="Profile" onAction="#onProfileButtonClick" />
+                <Label text=" | " />
+                <Hyperlink fx:id="logoutButton" text="Log out" onAction="#onLogoutButtonClick" />
+            </HBox>
+        </VBox>
+    </HBox>
+
+    <HBox id="pageContent" alignment="CENTER">
+        <ButtonBar>
+            <buttons>
+                <Button text="Dashboard" onAction="#onDashboardButtonClick" ButtonBar.buttonUniformSize="true" />
+                <Button text="Map" onAction="#onMapButtonClick" ButtonBar.buttonUniformSize="true" />
+                <Button text="History" onAction="#onHistoryButtonClick" ButtonBar.buttonUniformSize="true" />
+                <Button text="Endangered Species" onAction="#onEndangeredButtonClick" ButtonBar.buttonUniformSize="true" />
+                <Button text="Favourites" onAction="#onFavouritesButtonClick" ButtonBar.buttonUniformSize="true" />
+                <Button text="New Observation" onAction="#onNewObservationButtonClick" ButtonBar.buttonUniformSize="true" />
+                <Button fx:id="usersButton" text="Manage Users" onAction="#onUsersButtonClick"
+                        visible="false" managed="false" ButtonBar.buttonUniformSize="true" />
+            </buttons>
+        </ButtonBar>
+    </HBox>
+</VBox>

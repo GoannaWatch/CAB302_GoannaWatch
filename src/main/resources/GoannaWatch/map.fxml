@@ -1,107 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.WebView?>
-
-<?import javafx.scene.text.Font?>
 <VBox xmlns="http://javafx.com/javafx"
       id="contentContainer"
       xmlns:fx="http://javafx.com/fxml"
       stylesheets="@pageStyling.css"
       fx:controller="GoannaWatch.observations.controller.MapController"
       prefHeight="800" prefWidth="800">
-    <AnchorPane id="pageContent"
-                prefHeight="109.0"
-                prefWidth="603.0">
 
-        <VBox id="contentContainer"
-              alignment="CENTER"
-              layoutX="170.0"
-              layoutY="22.0"
-              prefHeight="98.0"
-              prefWidth="488.0">
-        </VBox>
-
-        <VBox id="contentContainer"
-              alignment="BASELINE_RIGHT"
-              centerShape="false"
-              layoutX="647.0"
-              layoutY="14.0"
-              scaleShape="false">
-
-            <Label alignment="CENTER"
-                   text="Map">
-                <font>
-                    <Font name="System Bold"
-                          size="12.0" />
-                </font>
-            </Label>
-
-            <HBox alignment="CENTER_RIGHT"
-                  spacing="5">
-
-                <Hyperlink  fx:id="themeButton"
-                            text="Light Mode"
-                            onAction="#onThemeButtonClick" />
-
-                <Label text=" | " />
-
-                <Hyperlink onAction="#onProfileButtonClick"
-                           text="Profile" />
-
-                <Label text=" | " />
-
-                <Hyperlink fx:id="logoutButton"
-                           onAction="#onLogoutButtonClick"
-                           text="Log out" />
-            </HBox>
-        </VBox>
-
-        <Label id="pageContent"
-               layoutX="14.0"
-               layoutY="14.0"
-               prefHeight="56.0"
-               prefWidth="223.0"
-               text="Goanna Watch">
-            <font>
-                <Font name="System Bold" size="18.0" />
-            </font>
-        </Label>
-    </AnchorPane>
-
-    <HBox id="pageContent"
-          alignment="CENTER">
-
-        <ButtonBar>
-            <buttons>
-
-                <Button fx:id="dashboardButton"
-                        onAction="#onDashboardButtonClick"
-                        text="Dashboard"
-                        ButtonBar.buttonUniformSize="true" />
-
-                <Button fx:id="mapButton"
-                        onAction="#onMapButtonClick"
-                        text="Map"
-                        ButtonBar.buttonUniformSize="true" />
-
-                <Button fx:id="historyButton"
-                        onAction="#onHistoryButtonClick"
-                        text="History"
-                        ButtonBar.buttonUniformSize="true" />
-
-                <Button fx:id="newObservationButton"
-                        onAction="#onNewObservationButtonClick"
-                        text="New Observation"
-                        ButtonBar.buttonUniformSize="true" />
-
-            </buttons>
-        </ButtonBar>
-    </HBox>
+    <fx:include fx:id="navBar" source="navbar.fxml" />
 
     <GridPane alignment="TOP_CENTER"
               hgap="10"

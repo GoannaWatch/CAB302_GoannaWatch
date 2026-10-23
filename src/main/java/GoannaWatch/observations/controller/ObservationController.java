@@ -1,6 +1,7 @@
 package GoannaWatch.observations.controller;
 
 import GoannaWatch.App;
+import GoannaWatch.account.controller.NavBarController;
 import GoannaWatch.account.model.*;
 import GoannaWatch.observations.model.*;
 
@@ -124,6 +125,9 @@ public class ObservationController {
 
     private File selectedVideo;
 
+    @FXML
+    private NavBarController navBarController;
+
     /**
      * Initialises the controller class. This method is automatically called after the .fxml file has been loaded.
      */
@@ -245,6 +249,7 @@ public class ObservationController {
      */
     @FXML
     public void initialize() {
+        navBarController.setPageTitle("Observations");
         observerColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getObserver().getFullName()));
         locationColumn.setCellValueFactory(cellData ->

@@ -12,122 +12,17 @@
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="GoannaWatch.account.controller.LandingController">
 
-    <AnchorPane id="pageContent"
-                prefHeight="109.0"
-                prefWidth="603.0">
+    <fx:include fx:id="navBar" source="navbar.fxml" />
 
-        <VBox id="contentContainer"
-              alignment="CENTER"
-              layoutX="170.0"
-              layoutY="22.0"
-              prefHeight="98.0"
-              prefWidth="488.0">
-
-            <Label fx:id="welcomeLabel"
-                   alignment="CENTER"
-                   contentDisplay="CENTER"
-                   style="-fx-font-size: 26px; -fx-font-weight: bold;"
-                   text="Welcome!"
-                   textAlignment="CENTER"
-                   wrapText="true"/>
-
-            <Label fx:id="emailLabel"
-                   text="" />
-        </VBox>
-
-        <VBox id="contentContainer"
-              alignment="BASELINE_RIGHT"
-              centerShape="false"
-              layoutX="647.0"
-              layoutY="14.0"
-              scaleShape="false">
-
-            <Label alignment="CENTER"
-                   text="Dashboard">
-                <font>
-                    <Font name="System Bold"
-                          size="12.0" />
-                </font>
-            </Label>
-
-            <HBox alignment="CENTER_RIGHT"
-                  spacing="5">
-
-                <Hyperlink  fx:id="themeButton"
-                            text="Light Mode"
-                            onAction="#onThemeButtonClick" />
-
-                <Label text=" | " />
-
-                <Hyperlink onAction="#onProfileButtonClick"
-                           text="Profile" />
-
-                <Label text=" | " />
-
-                <Hyperlink fx:id="logoutButton"
-                           onAction="#onLogoutButtonClick"
-                           text="Log out" />
-            </HBox>
-        </VBox>
-
-        <Label id="pageContent"
-               layoutX="14.0"
-               layoutY="14.0"
-               prefHeight="56.0"
-               prefWidth="223.0"
-               text="Goanna Watch">
-            <font>
-                <Font name="System Bold" size="18.0" />
-            </font>
-        </Label>
-    </AnchorPane>
-
-    <HBox id="pageContent"
-          alignment="CENTER">
-
-        <ButtonBar>
-            <buttons>
-
-                <Button fx:id="dashboardButton"
-                        onAction="#onDashboardButtonClick"
-                        text="Dashboard"
-                        ButtonBar.buttonUniformSize="true" />
-
-                <Button fx:id="mapButton"
-                        onAction="#onMapButtonClick"
-                        text="Map"
-                        ButtonBar.buttonUniformSize="true" />
-
-                <Button fx:id="historyButton"
-                        onAction="#onHistoryButtonClick"
-                        text="History"
-                        ButtonBar.buttonUniformSize="true" />
-
-                <Button fx:id="endangeredButton"
-                        onAction="#onEndangeredButtonClick"
-                        text="Endangered Species"
-                        ButtonBar.buttonUniformSize="true" />
-
-                <Button fx:id="favouritesButton"
-                        onAction="#onFavouritesButtonClick"
-                        text="Favourites"
-                        ButtonBar.buttonUniformSize="true" />
-
-                <Button fx:id="newObservationButton"
-                        onAction="#onNewObservationButtonClick"
-                        text="New Observation"
-                        ButtonBar.buttonUniformSize="true" />
-
-                <Button fx:id="usersButton"
-                        onAction="#onUsersButtonClick"
-                        text="Manage Users"
-                        visible="false"
-                        managed="false"
-                        ButtonBar.buttonUniformSize="true" />
-
-            </buttons>
-        </ButtonBar>
-    </HBox>
+    <VBox alignment="CENTER" spacing="4">
+        <Label fx:id="welcomeLabel"
+               alignment="CENTER"
+               style="-fx-font-size: 26px; -fx-font-weight: bold;"
+               text="Welcome!"
+               textAlignment="CENTER"
+               wrapText="true"/>
+        <Label fx:id="emailLabel" text="" />
+    </VBox>
 
     <GridPane alignment="TOP_CENTER"
               hgap="10"
