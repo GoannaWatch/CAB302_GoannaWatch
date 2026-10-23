@@ -3,15 +3,13 @@ package GoannaWatch.account.controller;
 import GoannaWatch.App;
 import GoannaWatch.account.model.Account;
 import GoannaWatch.account.model.Session;
+import atlantafx.base.controls.ToggleSwitch;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 
@@ -23,10 +21,10 @@ public class NavBarController {
     private Label pageTitleLabel;
 
     @FXML
-    private Hyperlink themeButton;
+    private ToggleSwitch themeToggle;
 
     @FXML
-    private Hyperlink logoutButton;
+    private MenuButton profileMenu;
 
     @FXML
     private Button usersButton;
@@ -44,7 +42,16 @@ public class NavBarController {
         usersButton.setVisible(expert);
         usersButton.setManaged(expert);
 
-        updateThemeButtonText();
+        if (current != null) {
+            profileMenu.setText(current.getFullName());
+        }
+
+        themeToggle.setSelected(App.isDarkMode());
+        themeToggle.selectedProperty().addListener((obs, wasDark, isDark) -> {
+            if (isDark != App.isDarkMode()) {
+                App.toggleTheme();
+            }
+        });
     }
 
     /**
@@ -54,16 +61,6 @@ public class NavBarController {
      */
     public void setPageTitle(String title) {
         pageTitleLabel.setText(title);
-    }
-
-    private void updateThemeButtonText() {
-        themeButton.setText(App.isDarkMode() ? "Light Mode" : "Dark Mode");
-    }
-
-    @FXML
-    private void onThemeButtonClick() {
-        App.toggleTheme();
-        updateThemeButtonText();
     }
 
     @FXML
@@ -117,9 +114,7 @@ public class NavBarController {
     }
 
     private void navigateTo(String fxmlName) throws IOException {
-        Stage stage = (Stage) logoutButton.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxmlName));
-        stage.setScene(new Scene(fxmlLoader.load()));
+        Navigator.goTo(profileMenu, fxmlName);
     }
 
     /**
@@ -129,11 +124,9 @@ public class NavBarController {
      */
     public void setActivePage(String page) {
         for (Node node : navButtons.getChildren()) {
-            if (node instanceof Button button) {
-                button.getStyleClass().remove("accent");
-                if (page.equals(button.getUserData())) {
-                    button.getStyleClass().add("accent");
-                }
+            node.getStyleClass().remove("accent");
+            if (page.equals(node.getUserData())) {
+                node.getStyleClass().add("accent");
             }
         }
     }

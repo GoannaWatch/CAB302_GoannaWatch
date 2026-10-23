@@ -1,61 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<?import javafx.scene.text.Font?>
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="GoannaWatch.observations.controller.EndangeredController"
+<VBox styleClass="bg-inset"
       stylesheets="@pageStyling.css"
-      prefHeight="800" prefWidth="800">
-    <AnchorPane id="pageContent"
-                prefHeight="109.0"
-                prefWidth="603.0">
+      prefHeight="800" prefWidth="800"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="GoannaWatch.observations.controller.EndangeredController">
 
-        <VBox id="contentContainer"
-              alignment="CENTER"
-              layoutX="170.0"
-              layoutY="22.0"
-              prefHeight="98.0"
-              prefWidth="488.0">
+    <fx:include fx:id="navBar" source="navbar.fxml" />
+
+    <VBox spacing="16" VBox.vgrow="ALWAYS">
+        <padding><Insets top="20" right="24" bottom="24" left="24" /></padding>
+
+        <VBox spacing="2">
+            <Label text="Endangered Species" styleClass="title-1" />
+            <Label wrapText="true" styleClass="text-muted"
+                   text="Endangered animals are an immense concern to animal enthusiasts everywhere. Please report on an endangered animal if found." />
         </VBox>
 
-        <Label id="pageContent"
-               layoutX="14.0"
-               layoutY="14.0"
-               prefHeight="56.0"
-               prefWidth="223.0"
-               text="Goanna Watch">
-            <font>
-                <Font name="System Bold" size="18.0" />
-            </font>
-        </Label>
-    </AnchorPane>
-    <GridPane alignment="TOP_CENTER"
-              hgap="10"
-              vgap="10">
-
-        <VBox alignment="TOP_CENTER">
-            <Label text="Endangered Species List" style="-fx-font-size: 28px; -fx-font-weight: bold;" />
-            <Label text="Endangered animals are an immense concern to the animal enthusiasts everywhere.
-            Please report on an endangered animal if found." />
-        </VBox>
-        <VBox spacing="10.0">
-            <TableView fx:id="endangeredTableView" VBox.vgrow="ALWAYS">
+        <VBox styleClass="card, bg-default, elevated-1" VBox.vgrow="ALWAYS">
+            <TableView fx:id="endangeredTableView" styleClass="edge-to-edge, alternating-rows"
+                       VBox.vgrow="ALWAYS">
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                </columnResizePolicy>
                 <columns>
-                    <TableColumn fx:id="observerColumn" text="Observer" prefWidth="130.0"/>
-                    <TableColumn fx:id="locationColumn" text="Location" prefWidth="130.0"/>
-                    <TableColumn fx:id="animalColumn" text="Animal" prefWidth="130.0"/>
-                    <TableColumn fx:id="endangerColumn" text="Endangered" prefWidth="130.0"/>
-                    <TableColumn fx:id="dateColumn" text="Date" prefWidth="130.0"/>
-                    <TableColumn fx:id="favouriteColumn" text="Favourite" prefWidth="130.0"/>
+                    <TableColumn fx:id="observerColumn" text="Observer" />
+                    <TableColumn fx:id="locationColumn" text="Location" />
+                    <TableColumn fx:id="animalColumn" text="Animal" />
+                    <TableColumn fx:id="endangerColumn" text="Endangered" />
+                    <TableColumn fx:id="dateColumn" text="Date" />
+                    <TableColumn fx:id="favouriteColumn" text="Favourite" />
                 </columns>
             </TableView>
         </VBox>
-    </GridPane>
-    <Button text="Back" onAction="#onBackButtonClick" maxWidth="Infinity"/>
+    </VBox>
 </VBox>

@@ -37,11 +37,16 @@ public class UsersController {
     @FXML
     private Label messageLabel;
 
+    @FXML private NavBarController navBarController;
+
     /**
      * Initialises the table and loads users.
      */
     @FXML
     public void initialize() {
+        navBarController.setPageTitle("Users");
+        navBarController.setActivePage("Users");
+
         Account account = Session.getCurrentAccount();
 
         // Only experts can view users.

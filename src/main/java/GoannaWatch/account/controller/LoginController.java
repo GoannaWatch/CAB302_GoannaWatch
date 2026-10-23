@@ -21,8 +21,6 @@ import java.util.Optional;
  * Initialises the controller class. This method is automatically called after the .fxml file has been loaded.
  */
 public class LoginController {
-    //TODO Bind button to enter key
-    //TODO Link Signup Page
 
     private final IAccountDAO accountDAO;
     private boolean rememberMe = false;
@@ -38,9 +36,6 @@ public class LoginController {
 
     @FXML
     private CheckBox rememberMeCheck;
-
-    //@FXML
-    //private Button signupButton;
 
     @FXML
     private Hyperlink signUpLink;
@@ -87,16 +82,12 @@ public class LoginController {
      */
     @FXML
     private void onCancelButtonClick() throws IOException {
-        Stage stage = (Stage) cancelButton.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("welcome.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
-        stage.setScene(scene);
+        Navigator.goTo(cancelButton, "welcome.fxml");
     }
 
     /**
      * Handles the action of clicking the login button. Checks if login details match an existing account and loads the landing view of the application.
      * @throws IOException If the .fxml file for the landing view isn't found.
-     * //TODO clear password field if login fails
      */
     @FXML
     private void onNextButtonClick() throws IOException {
@@ -133,12 +124,8 @@ public class LoginController {
                 return;
             }
 
-        Session.setCurrentAccount(account);
-
-        Stage stage = (Stage) loginButton.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("landing.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
-        stage.setScene(scene);
+            Session.setCurrentAccount(account);
+            Navigator.goTo(loginButton, "landing.fxml");
 
         } catch (SQLException e) {
             showLoginFeedback("Could not access the database. Please try again.");
@@ -146,26 +133,9 @@ public class LoginController {
         }
     }
 
-    /**
-     * Searches all accounts for one whose email matches the given address.
-     * @param email The email address to search for
-     * @return An {@link Optional} containing the matching {@link Account} if one exists.
-     */
-    //Package-private for account lookup to be uni tested without JavaFX controls to be initialised.
-    Optional<Account> findAccountByEmail(String email) {
-        List<Account> accounts = accountDAO.getAllAccounts();
-        return accounts.stream()
-                .filter(a -> a.getEmail().equalsIgnoreCase(email))
-                .findFirst();
-    }
-
     @FXML
     private void onSignupRedirectClick() throws IOException {
-        //Stage stage = (Stage) signupButton.getScene().getWindow();
-        Stage stage = (Stage) signUpLink.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("signup.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
-        stage.setScene(scene);
+        Navigator.goTo(signUpLink, "signup.fxml");
     }
 
     @FXML

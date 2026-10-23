@@ -37,9 +37,13 @@ public class ProfileController {
     @FXML
     private Button backButton;
 
+    @FXML private NavBarController navBarController;
+
     // Fill the form with the current user's details.
     @FXML
     public void initialize() {
+
+        navBarController.setPageTitle("Profile");
         Account account = Session.getCurrentAccount();
 
         if (account != null) {
@@ -97,10 +101,6 @@ public class ProfileController {
     // Return to the home page.
     @FXML
     private void onBackButtonClick() throws IOException {
-        Stage stage = (Stage) backButton.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader(
-                App.class.getResource("landing.fxml")
-        );
-        stage.setScene(new Scene(loader.load()));
+        Navigator.goTo(backButton, "landing.fxml");
     }
 }

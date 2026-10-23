@@ -29,6 +29,7 @@ public class LandingController {
     @FXML
     public void initialize() {
         navBarController.setPageTitle("Dashboard");
+        navBarController.setActivePage("Dashboard");
         Account me = Session.getCurrentAccount();
         if (me != null) {
             welcomeLabel.setText("Welcome, " + me.getFullName() + "!");

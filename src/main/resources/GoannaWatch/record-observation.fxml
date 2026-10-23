@@ -4,11 +4,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="20.0"
+<VBox styleClass="bg-inset"
       stylesheets="@pageStyling.css"
+      prefHeight="800" prefWidth="800"
       xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      prefHeight="800" prefWidth="800"
       fx:controller="GoannaWatch.observations.controller.RecordObservationController">
 
     <fx:include fx:id="navBar" source="navbar.fxml" />
@@ -17,41 +17,43 @@
         <ToggleGroup fx:id="endangeredGroup" />
     </fx:define>
 
-    <VBox spacing="15.0" maxWidth="500">
-        <padding>
-            <Insets top="10.0" right="20.0" bottom="20.0" left="20.0" />
-        </padding>
+    <VBox spacing="16" alignment="TOP_CENTER">
+        <padding><Insets top="24" right="24" bottom="24" left="24" /></padding>
 
-        <Label text="Record a New Observation" id="pageTitle" wrapText="true" />
+        <VBox styleClass="card, bg-default, elevated-1" spacing="14" maxWidth="560">
+            <Label text="Record a New Observation" styleClass="title-2" />
+            <Label text="Search for the place you saw the animal and pick it from the list."
+                   styleClass="text-muted" wrapText="true" />
 
-        <GridPane hgap="10.0" vgap="10.0">
-            <columnConstraints>
-                <ColumnConstraints minWidth="90" />
-                <ColumnConstraints hgrow="ALWAYS" />
-            </columnConstraints>
+            <GridPane hgap="12" vgap="12">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="90" />
+                    <ColumnConstraints hgrow="ALWAYS" />
+                </columnConstraints>
 
-            <Label text="Location:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <TextField fx:id="locationTextField" promptText="Start typing a place..."
-                       GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <Label text="Location" styleClass="text-muted" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <TextField fx:id="locationTextField" promptText="Start typing a place..."
+                           GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-            <Label text="Animal:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-            <ComboBox fx:id="speciesComboBox" editable="true" maxWidth="Infinity"
-                      GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Label text="Animal" styleClass="text-muted" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <ComboBox fx:id="speciesComboBox" editable="true" maxWidth="Infinity"
+                          GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-            <Label text="Endangered:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-            <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                <RadioButton fx:id="endangeredYesRadio" text="Yes" toggleGroup="$endangeredGroup" />
-                <RadioButton fx:id="endangeredNoRadio" text="No" toggleGroup="$endangeredGroup" />
+                <Label text="Endangered" styleClass="text-muted" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <HBox spacing="12" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                    <RadioButton fx:id="endangeredYesRadio" text="Yes" toggleGroup="$endangeredGroup" />
+                    <RadioButton fx:id="endangeredNoRadio" text="No" toggleGroup="$endangeredGroup" />
+                </HBox>
+
+                <Label text="Date" styleClass="text-muted" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                <DatePicker fx:id="datePicker" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            </GridPane>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button text="Submit" styleClass="accent" onAction="#onSubmit" defaultButton="true" />
+                <Button text="Clear" onAction="#onClear" />
+                <Label fx:id="statusLabel" styleClass="text-muted" />
             </HBox>
-
-            <Label text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-            <DatePicker fx:id="datePicker" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-        </GridPane>
-
-        <HBox spacing="10.0">
-            <Button text="Submit" onAction="#onSubmit" defaultButton="true" />
-            <Button text="Clear" onAction="#onClear" />
-            <Label fx:id="statusLabel" />
-        </HBox>
+        </VBox>
     </VBox>
 </VBox>

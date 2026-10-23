@@ -1,6 +1,7 @@
 package GoannaWatch.observations.controller;
 
 import GoannaWatch.App;
+import GoannaWatch.account.controller.NavBarController;
 import GoannaWatch.observations.model.Observation;
 import GoannaWatch.observations.model.SqliteObservationDAO;
 import javafx.beans.property.SimpleStringProperty;
@@ -44,8 +45,13 @@ public class FavouritesController {
         observationDAO = new SqliteObservationDAO();
     }
 
+    @FXML private NavBarController navBarController;
+
     @FXML
     public void initialize() {
+
+        navBarController.setPageTitle("Favourites");
+        navBarController.setActivePage("Favourites");
 
         observerColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(

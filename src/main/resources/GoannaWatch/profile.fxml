@@ -1,50 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox id="contentContainer"
-      alignment="TOP_CENTER"
-      prefWidth="800"
-      prefHeight="800"
+<VBox styleClass="bg-inset"
       stylesheets="@pageStyling.css"
+      prefWidth="800" prefHeight="800"
       xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="GoannaWatch.account.controller.ProfileController">
 
-    <Label text="Goanna Watch"
-           style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+    <fx:include fx:id="navBar" source="navbar.fxml" />
 
-    <VBox id="pageContent" maxWidth="420">
+    <VBox spacing="16" alignment="TOP_CENTER">
+        <padding><Insets top="24" right="24" bottom="24" left="24" /></padding>
 
-        <Label id="pageTitle" text="My Profile" />
+        <VBox styleClass="card, bg-default, elevated-1" spacing="10" maxWidth="460">
+            <Label text="My Profile" styleClass="title-2" />
 
-        <Label id="userInputLabel" text="First Name" />
-        <TextField id="userInput"
-                   fx:id="firstNameTextField" />
+            <Label text="First name" />
+            <TextField fx:id="firstNameTextField" />
 
-        <Label id="userInputLabel" text="Last Name" />
-        <TextField id="userInput"
-                   fx:id="lastNameTextField" />
+            <Label text="Last name" />
+            <TextField fx:id="lastNameTextField" />
 
-        <Label id="userInputLabel" text="Email Address" />
-        <TextField id="userInput"
-                   fx:id="emailTextField" />
+            <Label text="Email address" />
+            <TextField fx:id="emailTextField" />
 
-        <Label fx:id="feedbackLabel"
-               text=""
-               wrapText="true"
-               maxWidth="Infinity" />
+            <Label fx:id="feedbackLabel" wrapText="true" maxWidth="Infinity" styleClass="text-muted" />
 
-        <HBox spacing="10" alignment="CENTER_RIGHT">
-            <Button fx:id="backButton"
-                    text="Back"
-                    onAction="#onBackButtonClick" />
-
-            <Button text="Save"
-                    defaultButton="true"
-                    onAction="#onSaveButtonClick" />
-        </HBox>
-
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button fx:id="backButton" text="Back" onAction="#onBackButtonClick" />
+                <Button text="Save" styleClass="accent" defaultButton="true" onAction="#onSaveButtonClick" />
+            </HBox>
+        </VBox>
     </VBox>
 </VBox>

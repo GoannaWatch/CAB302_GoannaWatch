@@ -82,10 +82,7 @@ public class SignupController {
      */
     @FXML
     private void onCancelButtonClick() throws IOException {
-        Stage stage = (Stage) cancelButton.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("welcome.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
-        stage.setScene(scene);
+        Navigator.goTo(cancelButton, "welcome.fxml");
     }
 
     /**
@@ -153,11 +150,8 @@ public class SignupController {
 
             Session.setCurrentAccount(savedAccount);
 
+            Navigator.goTo(submitButton, "landing.fxml");
             Stage stage = (Stage) submitButton.getScene().getWindow();
-            FXMLLoader fxmlLoader =
-                    new FXMLLoader(App.class.getResource("landing.fxml"));
-            Scene scene = new Scene(fxmlLoader.load());
-            stage.setScene(scene);
 
         } catch (InputMismatchException | IllegalArgumentException e) {
             showSignupFeedback(e.getMessage());
@@ -172,11 +166,7 @@ public class SignupController {
 
     @FXML
     private void onLoginButtonClick() throws IOException {
-        //Stage stage = (Stage) loginButton.getScene().getWindow();
-        Stage stage = (Stage) loginLink.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("login.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
-        stage.setScene(scene);
+        Navigator.goTo(loginLink, "login.fxml");
     }
 
     /**

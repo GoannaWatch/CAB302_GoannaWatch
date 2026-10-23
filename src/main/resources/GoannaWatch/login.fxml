@@ -1,69 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
-<VBox id="contentContainer"
-      alignment="TOP_CENTER"
-      spacing="5"
+<VBox styleClass="bg-inset" alignment="CENTER"
       stylesheets="@pageStyling.css"
-      xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="GoannaWatch.account.controller.LoginController"
-      prefHeight="800" prefWidth="800">
-    <HBox id="pageContent" prefHeight="91.0" prefWidth="573.0">
-        <VBox id="contentContainer" alignment="CENTER_LEFT">
-            <Label id="pageContent" prefHeight="56.0" prefWidth="223.0" text="Goanna Watch">
-                <font>
-                    <Font name="System Bold" size="18.0" />
-                </font>
-            </Label>
-        </VBox>
-        <VBox id="contentContainer" alignment="CENTER_RIGHT" prefHeight="86.0" prefWidth="418.0">
-            <Label alignment="CENTER" text="Login Page">
-                <font>
-                    <Font name="System Bold" size="12.0" />
-                </font>
-            </Label>
-        </VBox>
-    </HBox>
-    <GridPane alignment="CENTER" hgap="10" vgap="10">
-        <padding>
-            <Insets bottom="10" left="25" right="25" top="10" />
-        </padding>
-        <VBox spacing="10" id="pageContent">
-            <Label id="pageTitle" text="Welcome Back." wrapText="true" />
-            <Label id="secondaryText" text="Sign in to continue recording local wildlife." wrapText="true" />
-            <Label id="userInputLabel" text="Email Address" />
-            <TextField id="userInput" fx:id="emailTextField" prefHeight="30" prefWidth="200" promptText="Enter your email address..." />
-            <Label id="userInputLabel" text="Password" />
-            <PasswordField id="userInput" fx:id="passwordField" prefHeight="30" prefWidth="100" promptText="Enter your password..." />
+      prefHeight="800" prefWidth="800"
+      xmlns="http://javafx.com/javafx/17.0.12"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="GoannaWatch.account.controller.LoginController">
 
-            <Label fx:id="loginFeedbackLabel"
-                   text=""
-                   wrapText="true"
-                   maxWidth="Infinity"
-                   visible="false"
-                   managed="false"
-                   style="-fx-background-color: rgba(180, 50, 50, 0.15); -fx-padding: 8; -fx-background-radius: 4;" />
+    <VBox styleClass="card, bg-default, elevated-1" spacing="12" maxWidth="420" alignment="TOP_LEFT">
+        <padding><Insets top="28" right="28" bottom="28" left="28" /></padding>
 
-            <CheckBox id="contentContainer" fx:id="rememberMeCheck" alignment="BOTTOM_LEFT" onAction="#onRememberMeCheck" text="Remember Me" />
-            <VBox alignment="CENTER">
-                <Button text="Log in" fx:id="loginButton" prefHeight="50" prefWidth="300" onAction="#onNextButtonClick"/>
-                <Button text="Go Back" fx:id="cancelButton" prefHeight="50" prefWidth="300" onAction="#onCancelButtonClick"/>
-                <HBox alignment="BOTTOM_CENTER">
-                    <Label text="Don't have a GoannaWatch account?  "/>
-                   <!-- <Button text="Sign up" fx:id="signupButton" prefHeight="50" prefWidth="300" onAction="#onSignupRedirectClick"/> -->
-                    <Hyperlink text="Sign up here" fx:id="signUpLink" onAction="#onSignupRedirectClick" />
-                </HBox>
-            </VBox>
-        </VBox>
-      <columnConstraints>
-         <ColumnConstraints />
-      </columnConstraints>
-      <rowConstraints>
-         <RowConstraints />
-      </rowConstraints>
-    </GridPane>
+        <Label text="Goanna Watch" styleClass="title-3, accent" />
+        <Label text="Welcome back." styleClass="title-1" />
+        <Label text="Sign in to continue recording local wildlife." styleClass="text-muted" wrapText="true" />
+
+        <Label text="Email address" />
+        <TextField fx:id="emailTextField" promptText="Enter your email address..." />
+
+        <Label text="Password" />
+        <PasswordField fx:id="passwordField" promptText="Enter your password..." />
+
+        <Label fx:id="loginFeedbackLabel" styleClass="feedback" wrapText="true" maxWidth="Infinity"
+               visible="false" managed="false" />
+
+        <CheckBox fx:id="rememberMeCheck" onAction="#onRememberMeCheck" text="Remember me" />
+
+        <Button text="Log in" fx:id="loginButton" styleClass="accent" maxWidth="Infinity"
+                onAction="#onNextButtonClick" />
+        <Button text="Go back" fx:id="cancelButton" maxWidth="Infinity"
+                onAction="#onCancelButtonClick" />
+
+        <HBox alignment="CENTER" spacing="4">
+            <Label text="Don't have a Goanna Watch account?" styleClass="text-muted" />
+            <Hyperlink text="Sign up here" fx:id="signUpLink" onAction="#onSignupRedirectClick" />
+        </HBox>
+    </VBox>
 </VBox>

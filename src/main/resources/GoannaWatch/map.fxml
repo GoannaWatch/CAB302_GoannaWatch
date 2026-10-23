@@ -1,22 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.WebView?>
-<VBox xmlns="http://javafx.com/javafx"
-      id="contentContainer"
-      xmlns:fx="http://javafx.com/fxml"
+
+<VBox styleClass="bg-inset"
       stylesheets="@pageStyling.css"
-      fx:controller="GoannaWatch.observations.controller.MapController"
-      prefHeight="800" prefWidth="800">
+      prefHeight="800" prefWidth="800"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="GoannaWatch.observations.controller.MapController">
 
     <fx:include fx:id="navBar" source="navbar.fxml" />
 
-    <GridPane alignment="TOP_CENTER"
-              hgap="10"
-              vgap="10">
+    <VBox spacing="16" VBox.vgrow="ALWAYS">
+        <padding><Insets top="20" right="24" bottom="24" left="24" /></padding>
 
-        <VBox alignment="TOP_CENTER">
-            <WebView fx:id="mapWebView" VBox.vgrow="ALWAYS" />
+        <VBox spacing="2">
+            <Label text="Observation Map" styleClass="title-1" />
+            <Label text="Click a pin to see the sighting." styleClass="text-muted" />
         </VBox>
-    </GridPane>
+
+        <VBox styleClass="card, bg-default, elevated-1" VBox.vgrow="ALWAYS">
+            <WebView fx:id="mapWebView" prefHeight="560" VBox.vgrow="ALWAYS" />
+        </VBox>
+    </VBox>
 </VBox>

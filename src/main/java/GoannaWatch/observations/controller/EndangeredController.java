@@ -1,6 +1,7 @@
 package GoannaWatch.observations.controller;
 
 import GoannaWatch.App;
+import GoannaWatch.account.controller.NavBarController;
 import GoannaWatch.observations.model.Observation;
 import GoannaWatch.observations.model.SqliteObservationDAO;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -41,12 +42,17 @@ public class EndangeredController {
     @FXML
     private TableColumn<Observation, Boolean> favouriteColumn;
 
+    @FXML private NavBarController navBarController;
+
     public EndangeredController() {
         observationDAO = new SqliteObservationDAO();
     }
 
     @FXML
     public void initialize() {
+
+        navBarController.setPageTitle("Endangered");
+        navBarController.setActivePage("Endangered");
 
         observerColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(

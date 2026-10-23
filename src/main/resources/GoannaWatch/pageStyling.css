@@ -1,39 +1,15 @@
-#pageTitle {
-    -fx-font-weight: 500;
-    -fx-font-size: 25pt;
+
+
+.card {
+    -fx-padding: 16;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: -color-border-muted;
 }
 
-#secondaryText {
-    -fx-font-size: 13pt;
-}
-
-#userInputLabel {
-    -fx-font-weight: bold;
-    -fx-font-size: 15pt;
-    -fx-margin: 10pt;
-}
-
-#userInput {
-    -fx-border-width: 1px;
-    -fx-border-color: black;
-    -fx-margin: 10pt;
-}
-
-#submitForm {
-    -fx-font-size: 18pt;
-    -fx-font-weight: bold;
-    -fx-color: mediumseagreen;
-    -fx-alignment: center;
-}
-
-#pageContent {
-    -fx-border-width: 1px;
-    -fx-border-color: black;
-    -fx-padding: 10pt;
-    -fx-spacing: 10pt;
-}
-
-#contentContainer {
-    -fx-padding: 10pt;
-    -fx-spacing: 10pt;
+.feedback {
+    -fx-background-color: -color-danger-subtle;
+    -fx-text-fill: -color-danger-fg;
+    -fx-padding: 8;
+    -fx-background-radius: 6;
 }

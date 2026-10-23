@@ -1,55 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import atlantafx.base.controls.ToggleSwitch?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
 
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
+      styleClass="navbar"
       fx:controller="GoannaWatch.account.controller.NavBarController">
 
-    <HBox id="pageContent" alignment="CENTER_LEFT" prefHeight="80.0">
-        <padding>
-            <Insets top="14.0" right="14.0" bottom="14.0" left="14.0" />
-        </padding>
+    <HBox alignment="CENTER_LEFT" spacing="16">
+        <padding><Insets top="14" right="24" bottom="4" left="24" /></padding>
 
-        <Label text="Goanna Watch">
-            <font>
-                <Font name="System Bold" size="18.0" />
-            </font>
-        </Label>
-
+        <Label text="Goanna Watch" styleClass="title-3, accent" />
         <Region HBox.hgrow="ALWAYS" />
 
-        <VBox id="contentContainer" alignment="BASELINE_RIGHT">
-            <Label fx:id="pageTitleLabel" alignment="CENTER">
-                <font>
-                    <Font name="System Bold" size="12.0" />
-                </font>
-            </Label>
+        <Label fx:id="pageTitleLabel" styleClass="title-3" />
+        <Separator orientation="VERTICAL" />
+        <ToggleSwitch fx:id="themeToggle" text="Dark mode" />
 
-            <HBox alignment="CENTER_RIGHT" spacing="5">
-                <Hyperlink fx:id="themeButton" text="Light Mode" onAction="#onThemeButtonClick" />
-                <Label text=" | " />
-                <Hyperlink text="Profile" onAction="#onProfileButtonClick" />
-                <Label text=" | " />
-                <Hyperlink fx:id="logoutButton" text="Log out" onAction="#onLogoutButtonClick" />
-            </HBox>
-        </VBox>
+        <MenuButton fx:id="profileMenu" text="Profile" styleClass="flat">
+            <items>
+                <MenuItem text="Account settings" onAction="#onProfileButtonClick" />
+                <SeparatorMenuItem />
+                <MenuItem text="Log out" onAction="#onLogoutButtonClick" />
+            </items>
+        </MenuButton>
     </HBox>
 
-    <HBox id="pageContent" alignment="CENTER">
-        <HBox fx:id="navButtons" id="pageContent" alignment="CENTER" spacing="8">
-            <padding><Insets top="8" bottom="8" /></padding>
-            <Button text="Dashboard" userData="Dashboard" onAction="#onDashboardButtonClick" />
-            <Button text="Record" userData="Record" onAction="#onRecordObservationClick" />
-            <Button text="History" userData="History" onAction="#onHistoryButtonClick" />
-            <Button text="Map" userData="Map" onAction="#onMapButtonClick" />
-            <Button text="Endangered" userData="Endangered" onAction="#onEndangeredButtonClick" />
-            <Button text="Favourites" userData="Favourites" onAction="#onFavouritesButtonClick" />
-            <Button fx:id="usersButton" text="Manage Users" userData="Users" onAction="#onUsersButtonClick"
-                    visible="false" managed="false" />
-        </HBox>
+    <HBox fx:id="navButtons" alignment="CENTER_LEFT" spacing="4">
+        <padding><Insets top="4" right="20" bottom="10" left="20" /></padding>
+
+        <Button text="Dashboard" userData="Dashboard" styleClass="flat" onAction="#onDashboardButtonClick" />
+        <Button text="Record" userData="Record" styleClass="flat" onAction="#onRecordObservationClick" />
+        <Button text="History" userData="History" styleClass="flat" onAction="#onHistoryButtonClick" />
+        <Button text="Map" userData="Map" styleClass="flat" onAction="#onMapButtonClick" />
+        <Button text="Endangered" userData="Endangered" styleClass="flat" onAction="#onEndangeredButtonClick" />
+        <Button text="Favourites" userData="Favourites" styleClass="flat" onAction="#onFavouritesButtonClick" />
+        <Button fx:id="usersButton" text="Manage Users" userData="Users" styleClass="flat"
+                onAction="#onUsersButtonClick" visible="false" managed="false" />
     </HBox>
 </VBox>
