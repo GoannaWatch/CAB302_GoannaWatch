@@ -251,6 +251,95 @@ public class DatabaseConnectionTest {
     }
 
     /**
+     * Verifies that running database initialization multiple times preserves existing data.
+     */
+    @Test
+    void testReinitializationPreservesExistingData(@TempDir Path folder) throws Exception {
+        String oldUrl = System.getProperty("goannawatch.db.url");
+
+        try {
+            System.setProperty(
+                    "goannawatch.db.url",
+                    "jdbc:sqlite:" + folder.resolve("reinitization.db").toAbsolutePath()
+            );
+
+            DatabaseInitializer.initialize();
+
+            try (Connection connection = DatabaseConnection.getConnection();
+                Statement statement = connection.createStatement()) {
+                statement.executeUpdate("""
+                        INSERT INTO accounts
+                        (id, first_name, last_name, email, password, role)
+                        VALUES 
+                            (100, 'Test', 'User', 'preserve@example.com', 'placeholder', 'user')
+                        """);
+
+                statement.executeUpdate("""
+                        INSERT INTO observations
+                        (id, observer_id, location, animal_seen, observed_at, is_endangered)
+                        VALUES 
+                            (200, 100, 'Brisbane', 'Goanna', '2026-10-20', 'No')
+                        """);
+
+                statement.executeUpdate("""
+                        INSERT INTO account_favourites
+                        (account_id, observation_id)
+                        VALUES (100, 200)
+                        """);
+            }
+
+            DatabaseInitializer.initialize();
+
+            try (Connection connection = DatabaseConnection.getConnection();
+                Statement statement = connection.createStatement()) {
+
+                try (ResultSet account = statement.executeQuery("""
+                        SELECT id
+                        FROM accounts
+                        WHERE id = 100
+                        """)) {
+
+                    assertTrue(
+                            account.next(), "Account must survive reinitialization"
+                    );
+                }
+
+                try (ResultSet observation = statement.executeQuery("""
+                        SELECT id
+                        FROM observations
+                        WHERE id = 200
+                        """)) {
+
+                    assertTrue(
+                            observation.next(), "Observation must survive reinitialization"
+                    );
+                }
+
+                try (ResultSet favourite = statement.executeQuery("""
+                        SELECT account_id, observation_id
+                        FROM account_favourites
+                        WHERE account_id = 100
+                        AND observation_id = 200
+                        """)) {
+
+                    assertTrue(
+                            favourite.next(), "Favourite must survive reinitialization"
+                    );
+                }
+
+            }
+
+        } finally {
+            restoreDatabaseUrl(oldUrl);
+        }
+
+
+    }
+
+
+
+
+    /**
      * Restores the database URL system property after a test.
      * @param previousUrl database URL that existed before the test
      */
