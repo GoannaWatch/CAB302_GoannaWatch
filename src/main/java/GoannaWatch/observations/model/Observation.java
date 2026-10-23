@@ -15,7 +15,7 @@ public class Observation {
     private String animalSeen;
     private String isEndangered;
     private LocalDate observedAt;
-    public Boolean isFavourite;
+    private Boolean isFavourite;
 
 
     /**
@@ -227,6 +227,16 @@ public class Observation {
             throw new InputMismatchException("Favourite status cannot be blank.");
         }
         this.isFavourite = isFavourite;
+    }
+
+    /**
+     * Determines if the current account has permissions to edit or delete the observation.
+     * @param account the account attempting the change
+     * @return true if the account has permission
+     */
+    public boolean canBeModifiedBy(Account account) {
+        return account != null
+                && (account.isExpert() || account.getId() == observer.getId());
     }
 }
 

@@ -16,14 +16,9 @@ import java.util.List;
 /**
  * Saves and reads observation comments in SQLite.
  */
-public class SqliteCommentDAO {
+public class SqliteCommentDAO implements ICommentDAO{
 
-    /**
-     * Saves a comment written by the current expert.
-     *
-     * @param comment The comment to save.
-     * @throws SecurityException If the current account is not an expert.
-     */
+    @Override
     public void addComment(Comment comment) {
         Account account = Session.getCurrentAccount();
 
@@ -52,12 +47,7 @@ public class SqliteCommentDAO {
         }
     }
 
-    /**
-     * Returns the comments for an observation.
-     *
-     * @param observationId The ID of the observation.
-     * @return The comments for the observation.
-     */
+    @Override
     public List<Comment> getCommentsByObservation(int observationId) {
         List<Comment> comments = new ArrayList<>();
         SqliteAccountDAO accountDAO = new SqliteAccountDAO();

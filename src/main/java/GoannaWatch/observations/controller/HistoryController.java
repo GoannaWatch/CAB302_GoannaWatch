@@ -34,8 +34,8 @@ import GoannaWatch.observations.model.SqliteCommentDAO;
 public class HistoryController {
 
     private final SqliteObservationDAO observationDAO;
-    private final SqliteCommentDAO commentDAO = new SqliteCommentDAO();
-    private final SqliteFavouriteDAO favouriteDAO = new SqliteFavouriteDAO();
+    private final ICommentDAO commentDAO = new SqliteCommentDAO();
+    private final IFavouriteDAO favouriteDAO = new SqliteFavouriteDAO();
 
     @FXML
     private Label ExportSuccessMsg;
@@ -127,6 +127,8 @@ public class HistoryController {
     @FXML
     private NavBarController navBarController;
 
+    private final ObservationExporter exporter = new ObservationExporter();
+
     /**
      * Initialises the controller class. This method is automatically called after the .fxml file has been loaded.
      */
@@ -150,9 +152,7 @@ public class HistoryController {
 
         // Only show edit and delete buttons to the owner or an expert.
         Account account = Session.getCurrentAccount();
-        boolean allowed = account != null
-                && (account.isExpert()
-                || account.getId() == observation.getObserver().getId());
+        boolean allowed = observation.canBeModifiedBy(account);
 
         confirmButton.setVisible(allowed);
         confirmButton.setManaged(allowed);
@@ -403,8 +403,7 @@ public class HistoryController {
         }
 
         // Only the owner or an expert can edit the observation.
-        if (!account.isExpert()
-                && account.getId() != selected.getObserver().getId()) {
+        if (!selected.canBeModifiedBy(account)) {
             showAlert("You can only edit your own observations.");
             return;
         }
@@ -457,8 +456,7 @@ public class HistoryController {
             return;
         }
 
-        if (!account.isExpert()
-                && account.getId() != selected.getObserver().getId()) {
+        if (!selected.canBeModifiedBy(account)) {
             showAlert("You can only delete your own observations.");
             return;
         }
@@ -530,8 +528,23 @@ public class HistoryController {
      */
     @FXML
     private void onExport() {
-        observationDAO.exportObservations();
-        ExportSuccessMsg.setText("Data Successfully Exported");
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Export Observations");
+        chooser.setInitialFileName("observations.csv");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV files", "*.csv"));
+
+        File file = chooser.showSaveDialog(observationsTableView.getScene().getWindow());
+        if (file == null) {
+            return; // user cancelled
+        }
+
+        try {
+            List<Observation> rows = new ArrayList<>(sortedObservations);
+            exporter.export(rows, file.toPath());
+            ExportSuccessMsg.setText("Exported " + rows.size() + " observations");
+        } catch (IOException e) {
+            showAlert("Could not export: " + e.getMessage());
+        }
     }
 
     @FXML

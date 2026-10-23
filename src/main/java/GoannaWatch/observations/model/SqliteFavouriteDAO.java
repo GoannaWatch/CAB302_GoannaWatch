@@ -13,7 +13,7 @@ import java.sql.SQLException;
  * Manages personal observation favourites.
  * Each favourite belongs to an individual account.
  */
-public class SqliteFavouriteDAO {
+public class SqliteFavouriteDAO implements IFavouriteDAO{
 
     /**
      * Returns the ID of the currently logged in account.
@@ -27,9 +27,7 @@ public class SqliteFavouriteDAO {
         return current.getId();
     }
 
-    /**
-     * Checks whether the current user has favourited a particular observation
-     */
+    @Override
     public boolean isFavourite(int observationId) {
         int accountId = currentAccountId();
 
@@ -54,10 +52,7 @@ public class SqliteFavouriteDAO {
         }
     }
 
-    /**
-     * Adds or removes a favourite for the current user.
-     * Does not modify the observation itself
-     */
+    @Override
     public void setFavourite(int observationId, boolean favourite) {
         int accountId = currentAccountId();
 
