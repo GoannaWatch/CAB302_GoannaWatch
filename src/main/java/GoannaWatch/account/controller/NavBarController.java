@@ -98,8 +98,8 @@ public class NavBarController {
     }
 
     @FXML
-    private void onNewObservationButtonClick() throws IOException {
-        navigateTo("observation.fxml");
+    private void onRecordObservationClick() throws IOException {
+        navigateTo("record-observation.fxml");
     }
 
     @FXML

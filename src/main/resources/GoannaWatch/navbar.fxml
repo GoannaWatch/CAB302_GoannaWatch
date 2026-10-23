@@ -43,11 +43,17 @@
         <ButtonBar>
             <buttons>
                 <Button text="Dashboard" onAction="#onDashboardButtonClick" ButtonBar.buttonUniformSize="true" />
-                <Button text="Map" onAction="#onMapButtonClick" ButtonBar.buttonUniformSize="true" />
-                <Button text="History" onAction="#onHistoryButtonClick" ButtonBar.buttonUniformSize="true" />
+
+                <MenuButton fx:id="observationsMenu" text="Observations" ButtonBar.buttonUniformSize="true">
+                    <items>
+                        <MenuItem text="Record New Observation" onAction="#onRecordObservationClick" />
+                        <MenuItem text="History" onAction="#onHistoryButtonClick" />
+                        <MenuItem text="Map" onAction="#onMapButtonClick" />
+                    </items>
+                </MenuButton>
+
                 <Button text="Endangered Species" onAction="#onEndangeredButtonClick" ButtonBar.buttonUniformSize="true" />
                 <Button text="Favourites" onAction="#onFavouritesButtonClick" ButtonBar.buttonUniformSize="true" />
-                <Button text="New Observation" onAction="#onNewObservationButtonClick" ButtonBar.buttonUniformSize="true" />
                 <Button fx:id="usersButton" text="Manage Users" onAction="#onUsersButtonClick"
                         visible="false" managed="false" ButtonBar.buttonUniformSize="true" />
             </buttons>

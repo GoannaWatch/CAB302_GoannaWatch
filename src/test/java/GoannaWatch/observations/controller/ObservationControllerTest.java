@@ -29,7 +29,7 @@ class ObservationControllerTest {
 
     @Test
     void observationShouldMatchLocationSearch() {
-        ObservationController controller = new ObservationController();
+        HistoryController controller = new HistoryController();
         Observation observation = createObservation();
 
         assertTrue(controller.matchesSearch(observation, "Brisbane"));
@@ -37,7 +37,7 @@ class ObservationControllerTest {
 
     @Test
     void locationSearchShouldIgnoreCase() {
-        ObservationController controller = new ObservationController();
+        HistoryController controller = new HistoryController();
         Observation observation = createObservation();
 
         assertTrue(controller.matchesSearch(observation, "brisbane"));
@@ -45,7 +45,7 @@ class ObservationControllerTest {
 
     @Test
     void observationShouldMatchAnimalSearch() {
-        ObservationController controller = new ObservationController();
+        HistoryController controller = new HistoryController();
         Observation observation = createObservation();
 
         assertTrue(controller.matchesSearch(observation, "Water Dragon"));
@@ -53,7 +53,7 @@ class ObservationControllerTest {
 
     @Test
     void animalSearchShouldIgnoreCase() {
-        ObservationController controller = new ObservationController();
+        HistoryController controller = new HistoryController();
         Observation observation = createObservation();
 
         assertTrue(controller.matchesSearch(observation, "eastern water dragon"));
@@ -61,7 +61,7 @@ class ObservationControllerTest {
 
     @Test
     void nonMatchingSearchShouldReturnFalse() {
-        ObservationController controller = new ObservationController();
+        HistoryController controller = new HistoryController();
         Observation observation = createObservation();
 
         assertFalse(controller.matchesSearch(observation, "Gold Coast"));
@@ -69,7 +69,7 @@ class ObservationControllerTest {
 
     @Test
     void blankSearchShouldMatchObservation() {
-        ObservationController controller = new ObservationController();
+        HistoryController controller = new HistoryController();
         Observation observation = createObservation();
 
         assertTrue(controller.matchesSearch(observation, ""));
@@ -77,7 +77,7 @@ class ObservationControllerTest {
 
     @Test
     void nullSearchShouldMatchObservation() {
-        ObservationController controller = new ObservationController();
+        HistoryController controller = new HistoryController();
         Observation observation = createObservation();
 
         assertTrue(controller.matchesSearch(observation, null));

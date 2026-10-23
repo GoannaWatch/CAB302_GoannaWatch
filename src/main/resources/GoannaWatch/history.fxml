@@ -1,114 +1,183 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.control.TableView?>
 
-<?import javafx.scene.text.Font?>
-<VBox xmlns="http://javafx.com/javafx"
-      id="contentContainer"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="GoannaWatch.observations.controller.HistoryController"
-      stylesheets="@pageStyling.css"
-      prefHeight="800" prefWidth="800">
-    <AnchorPane id="pageContent"
-                prefHeight="109.0"
-                prefWidth="603.0">
+<?import javafx.scene.control.TextArea?>
 
-        <VBox id="contentContainer"
-              alignment="CENTER"
-              layoutX="170.0"
-              layoutY="22.0"
-              prefHeight="98.0"
-              prefWidth="488.0">
-        </VBox>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.ComboBox?>
+<VBox spacing="20.0" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="GoannaWatch.observations.controller.HistoryController">
 
-        <VBox id="contentContainer"
-              alignment="BASELINE_RIGHT"
-              centerShape="false"
-              layoutX="647.0"
-              layoutY="14.0"
-              scaleShape="false">
+    <fx:include fx:id="navBar" source="navbar.fxml" />
 
-            <Label alignment="CENTER"
-                   text="History">
-                <font>
-                    <Font name="System Bold"
-                          size="12.0" />
-                </font>
-            </Label>
+    <padding>
+        <Insets bottom="20.0"
+                left="20.0"
+                right="20.0"
+                top="20.0"/>
 
-            <HBox alignment="CENTER_RIGHT"
-                  spacing="5">
+    </padding>
+    <Label text="Observation History"
+           id="pageTitle"
+           wrapText="true"/>
 
-                <Hyperlink  fx:id="themeButton"
-                            text="Light Mode"
-                            onAction="#onThemeButtonClick" />
+    <Label text="Select observation to view or edit" wrapText="true"/>
+    <HBox VBox.vgrow="ALWAYS" spacing="20.0">
+        <VBox spacing="10.0">
+            <CheckBox fx:id="showMineOnlyCheck"
+                      text="Show only my observations"
+                      onAction="#onFilterChanged"/>
+            <TextField fx:id="searchTextField"
+                       promptText="Search by animal or location..."/>
+            <TableView fx:id="observationsTableView"
+                       VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="observerColumn"
+                                 text="Observer"
+                                 prefWidth="130.0"/>
 
-                <Label text=" | " />
+                    <TableColumn fx:id="locationColumn"
+                                 text="Location"
+                                 prefWidth="130.0"/>
 
-                <Hyperlink onAction="#onProfileButtonClick"
-                           text="Profile" />
+                    <TableColumn fx:id="animalColumn"
+                                 text="Animal"
+                                 prefWidth="130.0"/>
 
-                <Label text=" | " />
+                    <TableColumn fx:id="endangerColumn"
+                                 text="Endangered"
+                                 prefWidth="130.0"/>
 
-                <Hyperlink fx:id="logoutButton"
-                           onAction="#onLogoutButtonClick"
-                           text="Log out" />
+                    <TableColumn fx:id="dateColumn"
+                                 text="Date"
+                                 prefWidth="130.0"/>
+
+                    <TableColumn fx:id="favouriteColumn"
+                                 text="Favourite"
+                                 prefWidth="130.0"/>
+                </columns>
+            </TableView>
+            <HBox spacing="10.0">
+                <Button text="Export table" onAction="#onExport" />
+                <Label fx:id="ExportSuccessMsg" />
             </HBox>
         </VBox>
+        <VBox spacing="10.0" prefWidth="400" fx:id="observationContainer">
+            <Label text="Observation details" />
+            <GridPane hgap="5.0" vgap="5.0">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="70"/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                </columnConstraints>
+                <Label text="Location: " GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Label text="Animal: " GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <Label text="Endangered:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <Label text="Date: " GridPane.columnIndex="0" GridPane.rowIndex="3"/>
 
-        <Label id="pageContent"
-               layoutX="14.0"
-               layoutY="14.0"
-               prefHeight="56.0"
-               prefWidth="223.0"
-               text="Goanna Watch">
-            <font>
-                <Font name="System Bold" size="18.0" />
-            </font>
-        </Label>
-    </AnchorPane>
+                <TextField fx:id="locationTextField"
+                           GridPane.columnIndex="1"
+                           GridPane.rowIndex="0"/>
 
-    <HBox id="pageContent"
-          alignment="CENTER">
+                <ComboBox fx:id="speciesComboBox"
+                          GridPane.columnIndex="1"
+                          GridPane.rowIndex="1"/>
+                <fx:define>
+                    <ToggleGroup fx:id="isEndangered" />
+                </fx:define>
 
-        <ButtonBar>
-            <buttons>
+                <HBox spacing="10"
+                      GridPane.columnIndex="1"
+                      GridPane.rowIndex="2">
 
-                <Button fx:id="dashboardButton"
-                        onAction="#onDashboardButtonClick"
-                        text="Dashboard"
-                        ButtonBar.buttonUniformSize="true" />
+                    <RadioButton fx:id="endangeredYesRadio"
+                                 text="Yes"
+                                 toggleGroup="$isEndangered"/>
 
-                <Button fx:id="mapButton"
-                        onAction="#onMapButtonClick"
-                        text="Map"
-                        ButtonBar.buttonUniformSize="true" />
+                    <RadioButton fx:id="endangeredNoRadio"
+                                 text="No"
+                                 toggleGroup="$isEndangered"/>
 
-                <Button fx:id="historyButton"
-                        onAction="#onHistoryButtonClick"
-                        text="History"
-                        ButtonBar.buttonUniformSize="true" />
+                </HBox>
 
-                <Button fx:id="newObservationButton"
-                        onAction="#onNewObservationButtonClick"
-                        text="New Observation"
-                        ButtonBar.buttonUniformSize="true" />
+                <DatePicker fx:id="datePicker"
+                            GridPane.columnIndex="1"
+                            GridPane.rowIndex="3"/>
 
-            </buttons>
-        </ButtonBar>
-    </HBox>
+                <Label text="Image: "
+                       GridPane.columnIndex="0"
+                       GridPane.rowIndex="4"/>
 
-    <GridPane alignment="TOP_CENTER"
-              hgap="10"
-              vgap="10">
+                <HBox spacing="10"
+                      GridPane.columnIndex="1"
+                      GridPane.rowIndex="4">
 
-        <VBox alignment="TOP_CENTER">
-            <Label text="Welp" style="-fx-font-size: 28px; -fx-font-weight: bold;" />
-            <Label text="The page your looking for isn't implemented yet. Please go to a different page." />
+                    <Button text="Choose Image"
+                            onAction="#onChooseImage"/>
+
+                    <Label fx:id="imageLabel"
+                           text="No image selected"
+                           wrapText="true"/>
+                </HBox>
+
+
+                <Label text="Video: "
+                       GridPane.columnIndex="0"
+                       GridPane.rowIndex="5"/>
+
+                <HBox spacing="10"
+                      GridPane.columnIndex="1"
+                      GridPane.rowIndex="5">
+
+                    <Button text="Choose Video"
+                            onAction="#onChooseVideo"/>
+
+                    <Label fx:id="videoLabel"
+                           text="No video selected"
+                           wrapText="true"/>
+                </HBox>
+            </GridPane>
+
+            <HBox spacing="10.0" alignment="CENTER">
+                <Button fx:id="confirmButton" text="Confirm" onAction="#onEditConfirm"/>
+                <Button fx:id="cancelButton" text="Cancel" onAction="#onCancel"/>
+                <Button fx:id="deleteButton" text="Delete" onAction="#onDelete"/>
+            </HBox>
+
+            <Label text="Comments"/>
+
+            <TextArea fx:id="commentsArea"
+                      editable="false"
+                      wrapText="true"
+                      prefHeight="120"/>
+
+            <VBox fx:id="commentForm"
+                  spacing="10.0"
+                  visible="false"
+                  managed="false">
+
+                <TextArea fx:id="commentTextArea"
+                          promptText="Write a comment..."
+                          wrapText="true"
+                          prefHeight="80"/>
+
+                <Button fx:id="addCommentButton"
+                        text="Add Comment"
+                        onAction="#onAddComment"/>
+            </VBox>
         </VBox>
-    </GridPane>
+    </HBox>
 </VBox>
+
