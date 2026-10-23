@@ -27,8 +27,6 @@
         <Label fx:id="loginFeedbackLabel" styleClass="feedback" wrapText="true" maxWidth="Infinity"
                visible="false" managed="false" />
 
-        <CheckBox fx:id="rememberMeCheck" onAction="#onRememberMeCheck" text="Remember me" />
-
         <Button text="Log in" fx:id="loginButton" styleClass="accent" maxWidth="Infinity"
                 onAction="#onNextButtonClick" />
         <Button text="Go back" fx:id="cancelButton" maxWidth="Infinity"

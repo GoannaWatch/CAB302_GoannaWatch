@@ -121,10 +121,6 @@ public class UsersController {
      */
     @FXML
     private void onBackClick() throws IOException {
-        Stage stage = (Stage) usersTable.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader(
-                App.class.getResource("landing.fxml")
-        );
-        stage.setScene(new Scene(loader.load()));
+        Navigator.goTo(usersTable, "landing.fxml");
     }
 }

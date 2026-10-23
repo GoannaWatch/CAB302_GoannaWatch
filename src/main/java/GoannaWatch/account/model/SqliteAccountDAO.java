@@ -16,8 +16,8 @@ public class SqliteAccountDAO implements IAccountDAO{
     @Override
     public void addAccount(Account account) {
         String sql = "INSERT INTO accounts "
-                + "(first_name, last_name, email, password) "
-                + "VALUES (?, ?, ?, ?)";
+                + "(first_name, last_name, email, password, role) "
+                + "VALUES (?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -28,6 +28,7 @@ public class SqliteAccountDAO implements IAccountDAO{
             // Store the hash instead of the original password.
             String hash = PasswordUtils.hashPassword(account.getPassword());
             statement.setString(4, hash);
+            statement.setString(5, account.getRole());
 
             statement.executeUpdate();
         } catch (SQLException e) {

@@ -23,7 +23,6 @@ import java.util.Optional;
 public class LoginController {
 
     private final IAccountDAO accountDAO;
-    private boolean rememberMe = false;
 
     @FXML
     private TextField emailTextField;
@@ -66,14 +65,6 @@ public class LoginController {
         loginFeedbackLabel.setText(message);
         loginFeedbackLabel.setVisible(true);
         loginFeedbackLabel.setManaged(true);
-    }
-
-    /**
-     * Handles the action of clicking the remember me checkbox.
-     */
-    @FXML
-    protected void onRememberMeCheck() {
-        rememberMe = rememberMeCheck.isSelected();
     }
 
     /**

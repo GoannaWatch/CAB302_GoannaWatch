@@ -38,13 +38,9 @@
         <Label text="Confirm password" />
         <PasswordField fx:id="confirmPasswordField" promptText="Re-enter your password..." />
 
+        <CheckBox fx:id="expertCheck" text="I am a wildlife expert" />
         <Label fx:id="signupFeedbackLabel" styleClass="feedback" wrapText="true" maxWidth="Infinity"
                visible="false" managed="false" />
-
-        <!-- Uncomment when ready to add extra account types
-        <Label text="User type" />
-        <ChoiceBox fx:id="userType" onShowing="#userTypeChoice" />
-        -->
 
         <Button text="Sign up" fx:id="submitButton" styleClass="accent" maxWidth="Infinity"
                 onAction="#onSubmitButtonClick" />

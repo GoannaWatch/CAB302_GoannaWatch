@@ -20,8 +20,6 @@ import java.util.InputMismatchException;
  */
 public class SignupController {
 
-    //TODO Functionality for Remember Me checkbox
-
     private final IAccountDAO accountDAO;
 
     @FXML
@@ -48,8 +46,8 @@ public class SignupController {
     @FXML
     private Button cancelButton;
 
-    //@FXML
-    //private Button loginButton;
+    @FXML
+    private CheckBox expertCheck;
 
     @FXML
     private Hyperlink loginLink;
@@ -136,6 +134,7 @@ public class SignupController {
             }
 
             Account newAccount = new Account(firstName, lastName, email, password);
+            newAccount.setRole(expertCheck.isSelected() ? "expert" : "user");
 
             accountDAO.addAccount(newAccount);
 
@@ -149,9 +148,7 @@ public class SignupController {
             }
 
             Session.setCurrentAccount(savedAccount);
-
             Navigator.goTo(submitButton, "landing.fxml");
-            Stage stage = (Stage) submitButton.getScene().getWindow();
 
         } catch (InputMismatchException | IllegalArgumentException e) {
             showSignupFeedback(e.getMessage());
