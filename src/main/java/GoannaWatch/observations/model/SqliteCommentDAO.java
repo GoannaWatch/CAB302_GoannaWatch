@@ -2,6 +2,7 @@ package GoannaWatch.observations.model;
 
 import GoannaWatch.account.model.Account;
 import GoannaWatch.database.DatabaseConnection;
+import GoannaWatch.account.model.Session;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import GoannaWatch.account.model.SqliteAccountDAO;
+import javafx.scene.chart.PieChart;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +22,13 @@ public class SqliteCommentDAO implements ICommentDAO{
 
     @Override
     public void addComment(Comment comment) {
+
+        Account currentAccount = Session.getCurrentAccount();
+
+        if (currentAccount == null || !currentAccount.isExpert()) {
+            throw new SecurityException("Only experts can add comments.");
+        }
+
         String sql = """
                 INSERT INTO comments
                 (observation_id, author_id, text)
@@ -26,18 +36,25 @@ public class SqliteCommentDAO implements ICommentDAO{
                 """;
 
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+            PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, comment.getObservationId());
-            statement.setInt(2, comment.getAuthor().getId());
+
+            statement.setInt(2, currentAccount.getId());
+
             statement.setString(3, comment.getText());
 
             statement.executeUpdate();
 
+
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to add comment: " + e.getMessage(), e);
+            throw new RuntimeException(
+                    "Failed to add comment: " + e.getMessage(), e
+            );
         }
+
     }
+
 
     @Override
     public List<Comment> getCommentsByObservation(int observationId) {

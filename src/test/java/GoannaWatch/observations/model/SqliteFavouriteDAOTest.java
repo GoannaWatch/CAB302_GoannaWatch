@@ -74,6 +74,8 @@ public class SqliteFavouriteDAOTest {
 
         SqliteObservationDAO observationDAO = new SqliteObservationDAO();
 
+        Session.setCurrentAccount(owner);
+
         observationDAO.addObservation(observation);
 
         assertTrue(observation.getId() > 0);
@@ -195,6 +197,33 @@ public class SqliteFavouriteDAOTest {
     /**
      * Users must be logged in before accessing or modifying their favourites
      */
+    @Test
+    void testUnauthenticatedUserCannotAccessFavourites() {
+        Session.clear();
+
+        ObservationService service = new ObservationService(
+                new SqliteObservationDAO(),
+                new SqliteCommentDAO(),
+                favouriteDAO
+        );
+
+        SecurityException readException = assertThrows(
+                SecurityException.class,
+                () -> service.setFavourite(observation,null, true)
+        );
+
+        assertEquals(
+                "Please log in first.",
+                readException.getMessage()
+        );
+
+        assertFalse(
+                favouriteDAO.isFavourite(owner, observation.getId())
+        );
+
+        assertTrue(service.getFavourites(null).isEmpty());
+
+    }
 
     /**
      * Deleting an observation must remove all favourites associated with that observation
