@@ -205,6 +205,7 @@ public class SqliteAccountDAOTest {
     void testNormalUserCannotPromoteAnotherUser(@TempDir Path folder) throws Exception {
         runWithTestDatabase(folder, "unauthorised-promotion.db", () -> {
             SqliteAccountDAO dao = new SqliteAccountDAO();
+            AccountService service = new AccountService(dao);
 
             dao.addAccount(new Account(
                     "Normal",
@@ -231,11 +232,9 @@ public class SqliteAccountDAOTest {
             assertNotNull(normalUser);
             assertNotNull(target);
 
-            Session.setCurrentAccount(normalUser);
-
             SecurityException exception = assertThrows(
                     SecurityException.class,
-                    () -> dao.grantExpert(target.getId())
+                    () -> service.grantExpert(normalUser, target.getId())
             );
 
             assertEquals(
@@ -260,6 +259,7 @@ public class SqliteAccountDAOTest {
     void testUnauthenticatedUserCannotPromote(@TempDir Path folder) throws Exception {
         runWithTestDatabase(folder, "logged-out-promotion.db",  () -> {
             SqliteAccountDAO dao = new SqliteAccountDAO();
+            AccountService service = new AccountService(dao);
 
             dao.addAccount(new Account(
                     "Target",
@@ -273,11 +273,10 @@ public class SqliteAccountDAOTest {
             );
 
             assertNotNull(target);
-            Session.clear();
 
             assertThrows(
                     SecurityException.class,
-                    () -> dao.grantExpert(target.getId())
+                    () -> service.grantExpert(null, target.getId())
             );
 
             Account unchangedTarget = dao.getAccountByEmail(

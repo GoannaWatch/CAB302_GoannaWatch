@@ -102,6 +102,7 @@ public class AccountRoleTest {
             DatabaseInitializer.initialize();
 
             SqliteAccountDAO dao = new SqliteAccountDAO();
+            AccountService service = new AccountService(dao);
 
             dao.addAccount(new Account(
                     "Min", "Expert", "expert@example.com", "Test123!"
@@ -118,7 +119,7 @@ public class AccountRoleTest {
             assertNotNull(user);
 
             expert.setRole("expert");
-            Session.setCurrentAccount(expert);
+            service.grantExpert(expert, user.getId());
 
             dao.grantExpert(user.getId());
 
@@ -126,16 +127,12 @@ public class AccountRoleTest {
             assertNotNull(updatedUser);
             assertTrue(updatedUser.isExpert());
 
-            Session.setCurrentAccount(user);
-
             assertThrows(
                     SecurityException.class,
-                    () -> dao.grantExpert(expert.getId())
+                    () -> service.grantExpert(user, expert.getId())
             );
 
         } finally {
-            Session.clear();
-
             if (oldUrl == null) {
                 System.clearProperty("goannawatch.db.url");
             } else {
