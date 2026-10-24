@@ -163,9 +163,7 @@ public class SqliteAccountDAO implements IAccountDAO{
      * @param email    the account email
      * @param password the password entered by the user
      * @return true if the account exists and the password matches
-     * @throws SQLException if the database query fails
      */
-
     @Override
     public boolean checkPassword(String email, String password) {
 
