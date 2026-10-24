@@ -9,6 +9,9 @@ import javafx.scene.control.TableCell;
 
 import java.util.function.Consumer;
 
+/**
+ * Table cell that shows a star button for adding an observation to the current account's favourites.
+ */
 public class FavouriteStarCell extends TableCell<Observation, Boolean> {
 
     private final Button button = new Button();
@@ -16,6 +19,7 @@ public class FavouriteStarCell extends TableCell<Observation, Boolean> {
     private final Consumer<Observation> onChanged;
 
     /**
+     * Create a star cell
      * @param service used to save the change
      * @param onChanged called after a successful toggle, for example to remove
      *                  the row from a list of favourites
@@ -28,6 +32,9 @@ public class FavouriteStarCell extends TableCell<Observation, Boolean> {
         button.setOnAction(e -> toggle());
     }
 
+    /**
+     * Flips the favourite state of the row's observation.
+     */
     private void toggle() {
         Observation observation = currentObservation();
         if (observation == null) {
@@ -46,11 +53,17 @@ public class FavouriteStarCell extends TableCell<Observation, Boolean> {
         }
     }
 
+    /**
+     * Returns the observation shown in the cell's row.
+     * @return the row's observation
+     */
     private Observation currentObservation() {
         return (isEmpty() || getTableRow() == null) ? null : getTableRow().getItem();
     }
 
-    /** Shows the star for the row's current state, or nothing for an empty row. */
+    /**
+     * Shows the star for the row's current state, or nothing for an empty row.
+     */
     private void refresh() {
         Observation observation = currentObservation();
         if (observation == null) {

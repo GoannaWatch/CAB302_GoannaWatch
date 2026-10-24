@@ -32,10 +32,16 @@ public class MapController {
 
     private final IObservationDAO observationDAO;
 
+    /**
+     * Constructor of MapController. Reads observations from SQLite database.
+     */
     public MapController() {
         this(new SqliteObservationDAO());
     }
 
+    /**
+     * Package-private for testing
+     */
     MapController(IObservationDAO observationDAO) {
         this.observationDAO = observationDAO;
     }

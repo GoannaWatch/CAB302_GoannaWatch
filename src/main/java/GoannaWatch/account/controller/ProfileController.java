@@ -36,7 +36,9 @@ public class ProfileController {
 
     @FXML private NavBarController navBarController;
 
-    // Fill the form with the current user's details.
+    /**
+     * Fill the form with the current user's details.
+     */
     @FXML
     public void initialize() {
 
@@ -50,7 +52,9 @@ public class ProfileController {
         }
     }
 
-    // Save profile details without changing the password.
+    /**
+     * Save profile details without changing the password.
+     */
     @FXML
     private void onSaveButtonClick() {
         Account currentAccount = Session.getCurrentAccount();
@@ -95,7 +99,9 @@ public class ProfileController {
         }
     }
 
-    // Return to the home page.
+    /**
+     * Return to the home page.
+     */
     @FXML
     private void onBackButtonClick() throws IOException {
         Navigator.goTo(backButton, "landing.fxml");

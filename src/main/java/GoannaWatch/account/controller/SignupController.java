@@ -52,7 +52,9 @@ public class SignupController {
         this(new SqliteAccountDAO());
     }
 
-    // Package-private constructor allows test DAO for unit t esting without changing normal app behaviour.
+    /**
+     * Package-private constructor allows test DAO for unit t esting without changing normal app behaviour.
+     */
     SignupController(IAccountDAO accountDAO) {
         this.accountDAO = accountDAO;
     }
@@ -154,6 +156,10 @@ public class SignupController {
         }
     }
 
+    /**
+     * Handles selecting the login link.
+     * @throws IOException if page cannot be found.
+     */
     @FXML
     private void onLoginButtonClick() throws IOException {
         Navigator.goTo(loginLink, "login.fxml");
@@ -169,6 +175,9 @@ public class SignupController {
         return accountDAO.getAccountByEmail(email) != null;
     }
 
+    /**
+     * Initialises the signup page.
+     */
     @FXML
     public void initialize() {
         submitButton.setDefaultButton(true);

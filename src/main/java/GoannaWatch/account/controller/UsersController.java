@@ -33,10 +33,16 @@ public class UsersController {
 
     @FXML private NavBarController navBarController;
 
+    /**
+     * Constructor for user management through SQlite.
+     */
     public UsersController() {
         this(new AccountService(new SqliteAccountDAO()));
     }
 
+    /**
+     * Package-private for testing
+     */
     UsersController(AccountService service) {
         this.service = service;
     }

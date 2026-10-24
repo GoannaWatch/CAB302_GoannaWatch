@@ -42,7 +42,9 @@ public class LoginController {
         this(new SqliteAccountDAO());
     }
 
-    // Package-private constructor allows a test DAO for unit testing without changing normal app behaviour
+    /**
+     * Package-private constructor allows a test DAO for unit testing without changing normal app behaviour.
+     */
     LoginController(IAccountDAO accountDAO) {
         this.service = new AccountService(accountDAO);
     }
@@ -105,16 +107,28 @@ public class LoginController {
         }
     }
 
+    /**
+     * Handles the sign-up link
+     * @throws IOException throws IO exception if page cannot be loaded.
+     */
     @FXML
     private void onSignupRedirectClick() throws IOException {
         Navigator.goTo(signUpLink, "signup.fxml");
     }
 
+    /**
+     * Initialises the view after the FXML is loaded.
+     */
     @FXML
     public void initialize() {
         loginButton.setDefaultButton(true);
     }
 
+    /**
+     * Finds the account with the given email.
+     * @param email the email address to search for
+     * @return the matching account
+     */
     Optional<Account> findAccountByEmail(String email) {
         List<Account> accounts = service.getAllAccounts();
         return accounts.stream()

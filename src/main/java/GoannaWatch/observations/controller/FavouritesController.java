@@ -13,6 +13,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import java.util.Comparator;
 
+/**
+ * Controller  for favourites page. Lists the observations the current account has favourited.
+ */
 public class FavouritesController {
 
     private final ObservationService service;
@@ -27,6 +30,9 @@ public class FavouritesController {
     @FXML private TableColumn<Observation, String> dateColumn;
     @FXML private TableColumn<Observation, Boolean> favouriteColumn;
 
+    /**
+     * Creates a controller for favourites of the user. Backed by SQLite.
+     */
     public FavouritesController() {
         this(new ObservationService(
                 new SqliteObservationDAO(),
@@ -34,10 +40,16 @@ public class FavouritesController {
                 new SqliteFavouriteDAO()));
     }
 
+    /**
+     * Package-private for testing.
+     */
     FavouritesController(ObservationService service) {
         this.service = service;
     }
 
+    /**
+     * Initialises the navbar and table, then loads the favourite observations.
+     */
     @FXML
     public void initialize() {
 

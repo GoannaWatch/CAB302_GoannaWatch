@@ -13,9 +13,10 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controller for Record Observations page.
+ */
 public class RecordObservationController {
-    private final IObservationDAO observationDAO = new SqliteObservationDAO();
-
     private LocationAutocomplete locationAutocomplete;
 
     @FXML
@@ -44,6 +45,9 @@ public class RecordObservationController {
 
     private final ObservationService service;
 
+    /**
+     * Constructs a controller backed by SQLite database.
+     */
     public RecordObservationController() {
         this(new ObservationService(
                 new SqliteObservationDAO(),
@@ -51,10 +55,16 @@ public class RecordObservationController {
                 new SqliteFavouriteDAO()));
     }
 
+    /**
+     * Package-private. Used for testing
+     */
     RecordObservationController(ObservationService service) {
         this.service = service;
     }
 
+    /**
+     * Initialises navbar, attaches autocomplete to location, fills species list and resets form.
+     */
     @FXML
     public void initialize() {
         navBarController.setPageTitle("Record Observation");
@@ -63,17 +73,17 @@ public class RecordObservationController {
         resetForm();
     }
 
+    /**
+     * Fills the species drop-down with recorded species.
+     */
     private void loadSpecies() {
-        List<String> species = observationDAO.getAllObservations().stream()
-                .map(Observation::getAnimalSeen)
-                .filter(s -> !"Unknown".equalsIgnoreCase(s))
-                .distinct()
-                .sorted(String.CASE_INSENSITIVE_ORDER)
-                .collect(Collectors.toCollection(ArrayList::new));
-        species.add(0, "Unknown");
-        speciesComboBox.getItems().setAll(species);
+        speciesComboBox.getItems().setAll(service.getKnownSpecies());
     }
 
+    /**
+     * Handles the submit button.
+     * Any issues are shown as an alert.
+     */
     @FXML
     private void onSubmit() {
         statusLabel.setText("");
@@ -105,7 +115,7 @@ public class RecordObservationController {
                     endangered,
                     datePicker.getValue(),
                     false);
-            observationDAO.addObservation(observation);
+            service.add(observation, account);
         } catch (InputMismatchException e) {
             showAlert(e.getMessage());
             return;
@@ -120,12 +130,18 @@ public class RecordObservationController {
         resetForm();
     }
 
+    /**
+     * Handles the clear button. Empties the status message and resets the form.
+     */
     @FXML
     private void onClear() {
         statusLabel.setText("");
         resetForm();
     }
 
+    /**
+     * Resets the form to the starting status.
+     */
     private void resetForm() {
         locationAutocomplete.clear();
         speciesComboBox.getSelectionModel().clearSelection();
@@ -134,6 +150,10 @@ public class RecordObservationController {
         datePicker.setValue(LocalDate.now());
     }
 
+    /**
+     * Shows a message to the user and waits until closed.
+     * @param message the text to display
+     */
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);

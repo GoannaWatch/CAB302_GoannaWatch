@@ -196,8 +196,5 @@ public class Account {
         return "expert".equals(role);
     }
 
-    public boolean isPe() {
-        return false;
-    }
 }
 

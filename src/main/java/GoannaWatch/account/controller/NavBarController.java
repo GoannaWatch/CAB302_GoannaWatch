@@ -57,54 +57,89 @@ public class NavBarController {
 
     /**
      * Sets the title shown above the theme, profile and logout links.
-     *
      * @param title the name of the current page
      */
     public void setPageTitle(String title) {
         pageTitleLabel.setText(title);
     }
 
+    /**
+     * Opens the profile page
+     * @throws IOException throw IO exception if page cannot be found.
+     */
     @FXML
     private void onProfileButtonClick() throws IOException {
         navigateTo("profile.fxml");
     }
 
+    /**
+     * Logs the current user out
+     * @throws IOException throw IO exception if page cannot be found.
+     */
     @FXML
     private void onLogoutButtonClick() throws IOException {
         Session.clear();
         navigateTo("welcome.fxml");
     }
 
+    /**
+     * Opens the landing page
+     * @throws IOException throw IO exception if page cannot be found.
+     */
     @FXML
     private void onDashboardButtonClick() throws IOException {
         navigateTo("landing.fxml");
     }
 
+    /**
+     * Opens the map page
+     * @throws IOException throw IO exception if page cannot be found.
+     */
     @FXML
     private void onMapButtonClick() throws IOException {
         navigateTo("map.fxml");
     }
 
+    /**
+     * Opens the history page
+     * @throws IOException throw IO exception if page cannot be found.
+     */
     @FXML
     private void onHistoryButtonClick() throws IOException {
         navigateTo("history.fxml");
     }
 
+    /**
+     * Opens the endangered page
+     * @throws IOException throw IO exception if page cannot be found.
+     */
     @FXML
     private void onEndangeredButtonClick() throws IOException {
         navigateTo("endangered.fxml");
     }
 
+    /**
+     * Opens the favourites page
+     * @throws IOException throw IO exception if page cannot be found.
+     */
     @FXML
     private void onFavouritesButtonClick() throws IOException {
         navigateTo("favourites.fxml");
     }
 
+    /**
+     * Opens the Record a New Observation page
+     * @throws IOException throw IO exception if page cannot be found.
+     */
     @FXML
     private void onRecordObservationClick() throws IOException {
         navigateTo("record-observation.fxml");
     }
 
+    /**
+     * Opens the Manage Users page
+     * @throws IOException throw IO exception if page cannot be found.
+     */
     @FXML
     private void onUsersButtonClick() throws IOException {
         Account account = Session.getCurrentAccount();
@@ -114,13 +149,17 @@ public class NavBarController {
         navigateTo("users.fxml");
     }
 
+    /**
+     * Navigates to the given page.
+     * @param fxmlName the name of the .fxml file to navigate to.
+     * @throws IOException throw IO exception if page cannot be found.
+     */
     private void navigateTo(String fxmlName) throws IOException {
         Navigator.goTo(profileMenu, fxmlName);
     }
 
     /**
      * Highlights the navigation button for the page being shown.
-     *
      * @param page the button's userData
      */
     public void setActivePage(String page) {

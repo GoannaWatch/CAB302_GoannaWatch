@@ -15,6 +15,9 @@ import javafx.scene.control.TableView;
 
 import java.util.Comparator;
 
+/**
+ * Controller for the endangered species page.
+ */
 public class EndangeredController {
 
     private final ObservationService service;
@@ -28,6 +31,10 @@ public class EndangeredController {
     @FXML private TableColumn<Observation, String> dateColumn;
     @FXML private TableColumn<Observation, Boolean> favouriteColumn;
 
+    /**
+     * Create a controller for the endangered species page.
+     * Backed by SQLite database
+     */
     public EndangeredController() {
         this(new ObservationService(
                 new SqliteObservationDAO(),
@@ -35,10 +42,17 @@ public class EndangeredController {
                 new SqliteFavouriteDAO()));
     }
 
+    /**
+     * Package-private for testing.
+     */
     EndangeredController(ObservationService service) {
         this.service = service;
     }
 
+    /**
+     * Initialises page with navbar and table columns.
+     * Loads endangered species.
+     */
     @FXML
     public void initialize() {
 

@@ -130,7 +130,6 @@ public class HistoryController {
     /**
      * Initialises the controller class. This method is automatically called after the .fxml file has been loaded.
      */
-
     public HistoryController() {
         this(new ObservationService(
                 new SqliteObservationDAO(),
@@ -138,6 +137,9 @@ public class HistoryController {
                 new SqliteFavouriteDAO()));
     }
 
+    /**
+     * Package-private for testing.
+     */
     HistoryController(ObservationService service) {
         this.service = service;
     }

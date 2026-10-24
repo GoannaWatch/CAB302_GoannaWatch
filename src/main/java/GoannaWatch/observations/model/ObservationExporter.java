@@ -45,8 +45,8 @@ public class ObservationExporter {
     /**
      * Makes values safe to place in CSV cell.
      * Values containing commas, quotes or line breaks are quoted.
-     * @param value
-     * @return
+     * @param value the text to prepare
+     * @return the value as it should appear in the file
      */
     private String text(String value) {
         if (value == null) {
