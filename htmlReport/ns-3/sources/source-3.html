@@ -1,0 +1,146 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PasswordUtils</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">GoannaWatch.account.model</a>
+</div>
+
+<h1>Coverage Summary for Class: PasswordUtils (GoannaWatch.account.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PasswordUtils</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (2/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (6/10)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package GoannaWatch.account.model;
+&nbsp;
+&nbsp;import com.password4j.Argon2Function;
+&nbsp;import com.password4j.Password;
+&nbsp;import com.password4j.types.Argon2;
+&nbsp;
+&nbsp;/**
+&nbsp; * Creates salted password hashes and checks passwords.
+&nbsp; */
+<b class="nc">&nbsp;public class PasswordUtils {</b>
+&nbsp;
+&nbsp;    // Memory in KiB, iterations, parallelism, output bytes, algorithm.
+<b class="fc">&nbsp;    private static final Argon2Function ARGON2 =</b>
+<b class="fc">&nbsp;            Argon2Function.getInstance(19456, 2, 1, 32, Argon2.ID);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a hash with a new random salt.
+&nbsp;     *
+&nbsp;     * @param password the password to hash
+&nbsp;     * @return the encoded hash, including its salt and settings
+&nbsp;     */
+&nbsp;    public static String hashPassword(String password) {
+<b class="fc">&nbsp;        return Password.hash(password)</b>
+<b class="fc">&nbsp;                .addRandomSalt(16)</b>
+<b class="fc">&nbsp;                .with(ARGON2)</b>
+<b class="fc">&nbsp;                .getResult();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks a password using the salt and settings in the stored hash.
+&nbsp;     *
+&nbsp;     * @param password the password entered by the user
+&nbsp;     * @param storedHash the saved hash
+&nbsp;     * @return true if the password matches
+&nbsp;     */
+&nbsp;    public static boolean checkPassword(String password, String storedHash) {
+<b class="nc">&nbsp;        Argon2Function settings =</b>
+<b class="nc">&nbsp;                Argon2Function.getInstanceFromHash(storedHash);</b>
+&nbsp;
+<b class="nc">&nbsp;        return Password.check(password, storedHash).with(settings);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-10-24 12:57</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,141 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > WelcomeController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">GoannaWatch.account.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: WelcomeController (GoannaWatch.account.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">WelcomeController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/3)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package GoannaWatch.account.controller;
+&nbsp;
+&nbsp;import GoannaWatch.account.model.Navigator;
+&nbsp;import javafx.fxml.FXML;
+&nbsp;import javafx.scene.control.Button;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;
+&nbsp;/**
+&nbsp; * The controller class for the Welcome view of the account.App application. This class handles the user interactions in the Welcome view.
+&nbsp; */
+<b class="fc">&nbsp;public class WelcomeController {</b>
+&nbsp;
+&nbsp;    @FXML
+&nbsp;    private Button loginButton;
+&nbsp;
+&nbsp;    @FXML
+&nbsp;    private Button signupButton;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles the action of clicking the login button. Loads the Login view of the application.
+&nbsp;     * @throws IOException If the .fxml file for the welcome view isn&#39;t found.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    protected void onLoginButtonClick() throws IOException {
+<b class="fc">&nbsp;        Navigator.goTo(loginButton, &quot;login.fxml&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles the action of clicking the signup button. Loads the Sign-Up view of the application.
+&nbsp;     * @throws IOException If the .fxml file for the welcome view isn&#39;t found.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    protected void onSignupButtonClick() throws IOException {
+<b class="nc">&nbsp;        Navigator.goTo(signupButton, &quot;signup.fxml&quot;);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-10-24 12:57</div>
+</div>
+</body>
+</html>

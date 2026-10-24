@@ -273,7 +273,7 @@ public class HistoryController {
 
 
 
-        locationAutocomplete = new LocationAutocomplete(locationTextField, new PlacesService());
+        locationAutocomplete = new LocationAutocomplete(locationTextField, new PlaceSearchClient());
 
         filteredObservations = new FilteredList<>(masterObservations, o -> true);
         sortedObservations = new SortedList<>(filteredObservations);

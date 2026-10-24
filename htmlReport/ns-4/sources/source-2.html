@@ -1,0 +1,501 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > DatabaseInitializer</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">GoannaWatch.database</a>
+</div>
+
+<h1>Coverage Summary for Class: DatabaseInitializer (GoannaWatch.database)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DatabaseInitializer</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    21.4%
+  </span>
+  <span class="absValue">
+    (3/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    27.5%
+  </span>
+  <span class="absValue">
+    (11/40)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    24.7%
+  </span>
+  <span class="absValue">
+    (24/97)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package GoannaWatch.database;
+&nbsp;
+&nbsp;import java.sql.Connection;
+&nbsp;import java.sql.ResultSet;
+&nbsp;import java.sql.SQLException;
+&nbsp;import java.sql.Statement;
+&nbsp;
+&nbsp;/**
+&nbsp; * Creates and updates the GoannaWatch database.
+&nbsp; * Database changes are applied as numbered migrations. Each migration only runs once for a particular database.
+&nbsp; */
+<b class="nc">&nbsp;public class DatabaseInitializer {</b>
+&nbsp;
+&nbsp;    private static final int CURRENT_DATABASE_VERSION = 7;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates the database tables and applies any required migrations.
+&nbsp;     * @throws SQLException if database initialization or migration fails.
+&nbsp;     */
+&nbsp;    public static void initialize() throws SQLException {
+<b class="fc">&nbsp;        try (Connection connection = DatabaseConnection.getConnection()) {</b>
+&nbsp;            // Do all schema changes together so a failed migration does not leave database partially updated
+<b class="fc">&nbsp;            connection.setAutoCommit(false);</b>
+&nbsp;
+&nbsp;            try {
+<b class="fc">&nbsp;                createSchemaVersionTable(connection);</b>
+&nbsp;
+<b class="fc">&nbsp;                int version = getDatabaseVersion(connection);</b>
+&nbsp;
+&nbsp;                /*
+&nbsp;                Version 1:
+&nbsp;                Initial accounts and observations tables.
+&nbsp;                 */
+<b class="pc">&nbsp;                if (version &lt; 1) {</b>
+<b class="nc">&nbsp;                    migrateToVersion1(connection);</b>
+<b class="nc">&nbsp;                    setDatabaseVersion(connection, 1);</b>
+<b class="nc">&nbsp;                    version = 1;</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                /*
+&nbsp;                Version 2:
+&nbsp;                Add endangered-status information to observations.
+&nbsp;                 */
+<b class="pc">&nbsp;                if (version &lt; 2) {</b>
+<b class="nc">&nbsp;                    migrateToVersion2(connection);</b>
+<b class="nc">&nbsp;                    setDatabaseVersion(connection, 2);</b>
+<b class="nc">&nbsp;                    version = 2;</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                /*
+&nbsp;                Version 3:
+&nbsp;                   Add latitude and longitude to observations.
+&nbsp;                */
+<b class="pc">&nbsp;                if (version &lt; 3) {</b>
+<b class="nc">&nbsp;                    migrateToVersion3(connection);</b>
+<b class="nc">&nbsp;                    setDatabaseVersion(connection, 3);</b>
+<b class="nc">&nbsp;                    version = 3;</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                /*
+&nbsp;                Version 4:
+&nbsp;                Add favourite status to observations.
+&nbsp;                */
+<b class="pc">&nbsp;                if (version &lt; 4) {</b>
+<b class="nc">&nbsp;                    migrateToVersion4(connection);</b>
+<b class="nc">&nbsp;                    setDatabaseVersion(connection, 4);</b>
+<b class="nc">&nbsp;                    version = 4;</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                /*
+&nbsp;                Version 5:
+&nbsp;                Add user and expert roles to accounts.
+&nbsp;                 */
+<b class="pc">&nbsp;                if (version &lt; 5) {</b>
+<b class="nc">&nbsp;                    migrateToVersion5(connection);</b>
+<b class="nc">&nbsp;                    setDatabaseVersion(connection, 5);</b>
+<b class="nc">&nbsp;                    version = 5;</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                /*
+&nbsp;                Version 6:
+&nbsp;                Add comments to observations.
+&nbsp;                 */
+<b class="pc">&nbsp;                if (version &lt; 6) {</b>
+<b class="nc">&nbsp;                    migrateToVersion6(connection);</b>
+<b class="nc">&nbsp;                    setDatabaseVersion(connection, 6);</b>
+<b class="nc">&nbsp;                    version = 6;</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                /*
+&nbsp;                Version 7:
+&nbsp;                Store favourites separately for each account.
+&nbsp;                 */
+<b class="pc">&nbsp;                if (version &lt; 7) {</b>
+<b class="nc">&nbsp;                    migrateToVersion7(connection);</b>
+<b class="nc">&nbsp;                    setDatabaseVersion(connection, 7);</b>
+<b class="nc">&nbsp;                    version = 7;</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                /*
+&nbsp;                Confirm that all required migrations were completed
+&nbsp;                 */
+<b class="pc">&nbsp;                if (version != CURRENT_DATABASE_VERSION) {</b>
+<b class="nc">&nbsp;                    throw new SQLException(</b>
+&nbsp;                            &quot;Database schema version mismatch. Expected &quot;
+&nbsp;                                + CURRENT_DATABASE_VERSION
+&nbsp;                                + &quot; but found &quot;
+&nbsp;                                + version
+&nbsp;                    );
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;                connection.commit();</b>
+&nbsp;
+&nbsp;            } catch (SQLException e) {
+<b class="nc">&nbsp;                connection.rollback();</b>
+&nbsp;                throw e;
+&nbsp;            } finally {
+<b class="fc">&nbsp;                connection.setAutoCommit(true);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Stores the current database schema version.
+&nbsp;     */
+&nbsp;    private static void createSchemaVersionTable(Connection connection) throws SQLException {
+<b class="fc">&nbsp;        String sql = &quot;&quot;&quot;</b>
+&nbsp;                CREATE TABLE IF NOT EXISTS schema_version (
+&nbsp;                    version INTEGER NOT NULL
+&nbsp;                )
+&nbsp;                &quot;&quot;&quot;;
+&nbsp;
+<b class="fc">&nbsp;        try (Statement statement = connection.createStatement()) {</b>
+<b class="fc">&nbsp;            statement.executeUpdate(sql);</b>
+&nbsp;
+&nbsp;            /*
+&nbsp;            Brand new schema_version table contains no row.
+&nbsp;            Insert version 0 so migrations know that nothing has been applied yet
+&nbsp;             */
+<b class="fc">&nbsp;            try (ResultSet result = statement.executeQuery(</b>
+&nbsp;                    &quot;SELECT COUNT(*) AS count FROM schema_version&quot;)) {
+<b class="pc">&nbsp;                if (result.next() &amp;&amp; result.getInt(&quot;count&quot;) == 0) {</b>
+<b class="nc">&nbsp;                    statement.executeUpdate(</b>
+&nbsp;                            &quot;INSERT INTO schema_version (version) VALUES (0)&quot;
+&nbsp;                    );
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the schema version currently stored in the database.
+&nbsp;     */
+&nbsp;    private static int getDatabaseVersion(Connection connection) throws SQLException {
+<b class="fc">&nbsp;        String sql = &quot;SELECT version FROM schema_version LIMIT 1&quot;;</b>
+&nbsp;
+<b class="pc">&nbsp;        try (Statement statement = connection.createStatement();</b>
+<b class="fc">&nbsp;             ResultSet result = statement.executeQuery(sql)) {</b>
+&nbsp;
+<b class="pc">&nbsp;            if (result.next()) {</b>
+<b class="fc">&nbsp;                return result.getInt(&quot;version&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            return 0;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates the schema version after a successful migration.
+&nbsp;     */
+&nbsp;    private static void setDatabaseVersion(
+&nbsp;            Connection connection,
+&nbsp;            int version) throws SQLException {
+<b class="nc">&nbsp;        String sql = &quot;UPDATE schema_version SET version = &quot; + version;</b>
+&nbsp;
+<b class="nc">&nbsp;        try (Statement statement = connection.createStatement()) {</b>
+<b class="nc">&nbsp;            statement.executeUpdate(sql);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Version 1 of the database.
+&nbsp;     * Creates the original accoutns and obserrvation tables.
+&nbsp;     */
+&nbsp;    private static void migrateToVersion1(Connection connection) throws SQLException {
+&nbsp;
+<b class="nc">&nbsp;        String accountSql = &quot;&quot;&quot;</b>
+&nbsp;                    CREATE TABLE IF NOT EXISTS accounts (
+&nbsp;                        id INTEGER PRIMARY KEY,
+&nbsp;                        first_name TEXT NOT NULL,
+&nbsp;                        last_name TEXT NOT NULL,
+&nbsp;                        email TEXT NOT NULL COLLATE NOCASE UNIQUE,
+&nbsp;                        password TEXT NOT NULL
+&nbsp;                    )
+&nbsp;                    &quot;&quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;        String observationSql = &quot;&quot;&quot;</b>
+&nbsp;            CREATE TABLE IF NOT EXISTS observations (
+&nbsp;                id INTEGER PRIMARY KEY,
+&nbsp;                observer_id INTEGER NOT NULL,
+&nbsp;                location TEXT NOT NULL,
+&nbsp;                animal_seen TEXT NOT NULL,
+&nbsp;                observed_at TEXT NOT NULL,
+&nbsp;                FOREIGN KEY (observer_id) REFERENCES accounts(id)
+&nbsp;            )
+&nbsp;            &quot;&quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;        try (Statement statement = connection.createStatement()) {</b>
+<b class="nc">&nbsp;            statement.executeUpdate(accountSql);</b>
+<b class="nc">&nbsp;            statement.executeUpdate(observationSql);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Version 2 of the database.
+&nbsp;     * Adds is_endangered to observations if the column is not already present.
+&nbsp;     */
+&nbsp;    private static void migrateToVersion2(Connection connection) throws SQLException {
+<b class="nc">&nbsp;        if (!columnExists(connection, &quot;observations&quot;, &quot;is_endangered&quot;)) {</b>
+<b class="nc">&nbsp;            String sql = &quot;&quot;&quot;</b>
+&nbsp;                    ALTER TABLE observations
+&nbsp;                    ADD COLUMN is_endangered TEXT NOT NULL DEFAULT &#39;No&#39;
+&nbsp;                    &quot;&quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;            try (Statement statement = connection.createStatement()) {</b>
+<b class="nc">&nbsp;                statement.executeUpdate(sql);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Version 3 of the database.
+&nbsp;     * Adds nullable latitude and longitude columns to observations.
+&nbsp;     */
+&nbsp;    private static void migrateToVersion3(Connection connection) throws SQLException {
+<b class="nc">&nbsp;        try (Statement statement = connection.createStatement()) {</b>
+<b class="nc">&nbsp;            if (!columnExists(connection, &quot;observations&quot;, &quot;latitude&quot;)) {</b>
+<b class="nc">&nbsp;                statement.executeUpdate(&quot;ALTER TABLE observations ADD COLUMN latitude REAL&quot;);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            if (!columnExists(connection, &quot;observations&quot;, &quot;longitude&quot;)) {</b>
+<b class="nc">&nbsp;                statement.executeUpdate(&quot;ALTER TABLE observations ADD COLUMN longitude REAL&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Version 4 of the database.
+&nbsp;     * Adds isFavourite columns to the observations.
+&nbsp;     */
+&nbsp;    private static void migrateToVersion4(Connection connection) throws SQLException {
+<b class="nc">&nbsp;        if (!columnExists(connection, &quot;observations&quot;, &quot;is_favourite&quot;)) {</b>
+<b class="nc">&nbsp;            String sql = &quot;&quot;&quot;</b>
+&nbsp;                ALTER TABLE observations
+&nbsp;                ADD COLUMN is_favourite INTEGER NOT NULL DEFAULT 0
+&nbsp;                &quot;&quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;            try (Statement statement = connection.createStatement()) {</b>
+<b class="nc">&nbsp;                statement.executeUpdate(sql);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Version 5 of the database.
+&nbsp;     * Adds the role column to accounts if it is not already present.
+&nbsp;     * Existing accounts receive the user role by default.
+&nbsp;     */
+&nbsp;    private static void migrateToVersion5(Connection connection)
+&nbsp;            throws SQLException {
+&nbsp;
+<b class="nc">&nbsp;        if (!columnExists(connection, &quot;accounts&quot;, &quot;role&quot;)) {</b>
+<b class="nc">&nbsp;            String sql = &quot;&quot;&quot;</b>
+&nbsp;                    ALTER TABLE accounts
+&nbsp;                    ADD COLUMN role TEXT NOT NULL DEFAULT &#39;user&#39;
+&nbsp;                    &quot;&quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;            try (Statement statement = connection.createStatement()) {</b>
+<b class="nc">&nbsp;                statement.executeUpdate(sql);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Version 6 of the database.
+&nbsp;     * Creates the comments table.
+&nbsp;     */
+&nbsp;    private static void migrateToVersion6(Connection connection)
+&nbsp;            throws SQLException {
+&nbsp;
+<b class="nc">&nbsp;        String sql = &quot;&quot;&quot;</b>
+&nbsp;            CREATE TABLE IF NOT EXISTS comments (
+&nbsp;                id INTEGER PRIMARY KEY,
+&nbsp;                observation_id INTEGER NOT NULL,
+&nbsp;                author_id INTEGER NOT NULL,
+&nbsp;                text TEXT NOT NULL,
+&nbsp;                FOREIGN KEY (observation_id) REFERENCES observations(id)
+&nbsp;                    ON DELETE CASCADE,
+&nbsp;                FOREIGN KEY (author_id) REFERENCES accounts(id)
+&nbsp;            )
+&nbsp;            &quot;&quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;        try (Statement statement = connection.createStatement()) {</b>
+<b class="nc">&nbsp;            statement.executeUpdate(sql);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Version 7:
+&nbsp;     * Store favourites separately for each account.
+&nbsp;     *
+&nbsp;     * Each account can favourite multiple observations.
+&nbsp;     * Each observation can be favourited by multiple accounts.
+&nbsp;     */
+&nbsp;    private static void migrateToVersion7(Connection connection)
+&nbsp;            throws SQLException {
+&nbsp;
+<b class="nc">&nbsp;        String sql = &quot;&quot;&quot;</b>
+&nbsp;            CREATE TABLE IF NOT EXISTS account_favourites (
+&nbsp;                account_id INTEGER NOT NULL,
+&nbsp;                observation_id INTEGER NOT NULL,
+&nbsp;                PRIMARY KEY (account_id, observation_id),
+&nbsp;                FOREIGN KEY (account_id) REFERENCES accounts(id)
+&nbsp;                    ON DELETE CASCADE,
+&nbsp;                FOREIGN KEY (observation_id) REFERENCES observations(id)
+&nbsp;                    ON DELETE CASCADE
+&nbsp;            )    
+&nbsp;            &quot;&quot;&quot;;
+&nbsp;
+<b class="nc">&nbsp;        try (Statement statement = connection.createStatement()) {</b>
+<b class="nc">&nbsp;            statement.executeUpdate(sql);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks whether a table contains a particular column.
+&nbsp;     */
+&nbsp;    private static boolean columnExists(
+&nbsp;            Connection connection,
+&nbsp;            String tableName,
+&nbsp;            String columnName) throws SQLException {
+&nbsp;
+<b class="nc">&nbsp;        String sql = &quot;PRAGMA table_info(&quot; + tableName + &quot;)&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;        try (Statement statement = connection.createStatement();</b>
+<b class="nc">&nbsp;            ResultSet result = statement.executeQuery(sql)) {</b>
+&nbsp;
+<b class="nc">&nbsp;            while (result.next()) {</b>
+<b class="nc">&nbsp;                if (columnName.equals(result.getString(&quot;name&quot;))) {</b>
+<b class="nc">&nbsp;                    return true;</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return false;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Runs a small manual database initialization check.
+&nbsp;     */
+&nbsp;    public static void main(String[] args) {
+&nbsp;        try {
+<b class="nc">&nbsp;            initialize();</b>
+&nbsp;
+<b class="nc">&nbsp;            try (Connection connection = DatabaseConnection.getConnection();</b>
+<b class="nc">&nbsp;                 Statement statement = connection.createStatement();</b>
+<b class="nc">&nbsp;                 ResultSet result = statement.executeQuery(</b>
+&nbsp;                         &quot;SELECT version FROM schema_version&quot;
+&nbsp;                 )) {
+&nbsp;
+<b class="nc">&nbsp;                if (result.next()) {</b>
+<b class="nc">&nbsp;                    System.out.println(</b>
+<b class="nc">&nbsp;                            &quot;Database schema version: &quot; + result.getInt(&quot;version&quot;)</b>
+&nbsp;                    );
+&nbsp;                }
+&nbsp;
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            System.out.println(&quot;Database initialized successfully&quot;);</b>
+&nbsp;        } catch (SQLException e) {
+<b class="nc">&nbsp;            System.err.println(&quot;Database initialization failed: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+&nbsp;
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-10-24 12:57</div>
+</div>
+</body>
+</html>

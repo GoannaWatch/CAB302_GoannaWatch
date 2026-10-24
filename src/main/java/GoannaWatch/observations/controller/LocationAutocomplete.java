@@ -1,7 +1,7 @@
 package GoannaWatch.observations.controller;
 
 import GoannaWatch.observations.model.Place;
-import GoannaWatch.observations.model.PlacesService;
+import GoannaWatch.observations.model.PlaceSearchClient;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.geometry.Side;
@@ -25,7 +25,7 @@ public class LocationAutocomplete {
     private final TextField textField;
 
 
-    private final PlacesService placesService;
+    private final PlaceSearchClient placesService;
     private final ContextMenu suggestionMenu = new ContextMenu();
 
     /**
@@ -49,7 +49,7 @@ public class LocationAutocomplete {
      * @param textField the field the user types a location into.
      * @param placesService the service used to lookup matching places.
      */
-    public LocationAutocomplete(TextField textField, PlacesService placesService) {
+    public LocationAutocomplete(TextField textField, PlaceSearchClient placesService) {
         this.textField = textField;
         this.placesService = placesService;
 

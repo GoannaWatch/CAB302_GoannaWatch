@@ -58,7 +58,7 @@ public class RecordObservationController {
     @FXML
     public void initialize() {
         navBarController.setPageTitle("Record Observation");
-        locationAutocomplete = new LocationAutocomplete(locationTextField, new PlacesService());
+        locationAutocomplete = new LocationAutocomplete(locationTextField, new PlaceSearchClient());
         loadSpecies();
         resetForm();
     }

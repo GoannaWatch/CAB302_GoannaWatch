@@ -1,0 +1,131 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > IAccountDAO</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">GoannaWatch.account.model</a>
+</div>
+
+<h1>Coverage Summary for Class: IAccountDAO (GoannaWatch.account.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">IAccountDAO</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package GoannaWatch.account.model;
+&nbsp;
+&nbsp;import java.sql.SQLException;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Interface for the Account Data Access Object that handles
+&nbsp; * the CRUD operations for the Account class with the database.
+&nbsp; */
+&nbsp;public interface IAccountDAO {
+&nbsp;    /**
+&nbsp;     * Adds a new account to the database.
+&nbsp;     *
+&nbsp;     * @param account The account to add.
+&nbsp;     */
+&nbsp;    public void addAccount(Account account);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates an existing account in the database.
+&nbsp;     *
+&nbsp;     * @param account The account to update.
+&nbsp;     */
+&nbsp;    public void updateAccount(Account account);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deletes an account from the database.
+&nbsp;     *
+&nbsp;     * @param account The account to delete.
+&nbsp;     */
+&nbsp;    public void deleteAccount(Account account);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves an account from the database.
+&nbsp;     *
+&nbsp;     * @param email The email of the account to retrieve.
+&nbsp;     * @return The account with the given id, or null if not found.
+&nbsp;     */
+&nbsp;    Account getAccountByEmail(String email);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks an account&#39;s password
+&nbsp;     * @param email the account email
+&nbsp;     * @param password the password entered by the user
+&nbsp;     * @return true if the users exists and the password matches
+&nbsp;     */
+&nbsp;    boolean checkPassword(String email, String password);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gives an account the expert role. Who may do this is decided by AccountService.
+&nbsp;     *
+&nbsp;     * @param accountId the ID of the account to promote
+&nbsp;     * @throws IllegalArgumentException if no account has that ID
+&nbsp;     */
+&nbsp;    void grantExpert(int accountId);
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves all accounts from the database.
+&nbsp;     *
+&nbsp;     * @return A list of all accounts in the database.
+&nbsp;     */
+&nbsp;    public List&lt;Account&gt; getAllAccounts();
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-10-24 12:57</div>
+</div>
+</body>
+</html>

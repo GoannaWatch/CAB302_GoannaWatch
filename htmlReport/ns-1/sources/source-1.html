@@ -1,0 +1,194 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > App</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">GoannaWatch</a>
+</div>
+
+<h1>Coverage Summary for Class: App (GoannaWatch)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">App</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (4/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (12/20)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package GoannaWatch;
+&nbsp;
+&nbsp;import atlantafx.base.theme.Dracula;
+&nbsp;import atlantafx.base.theme.PrimerDark;
+&nbsp;import atlantafx.base.theme.PrimerLight;
+&nbsp;import javafx.application.Application;
+&nbsp;import javafx.fxml.FXMLLoader;
+&nbsp;import javafx.scene.Scene;
+&nbsp;import javafx.stage.Stage;
+&nbsp;import javafx.stage.StageStyle;
+&nbsp;import GoannaWatch.database.DatabaseInitializer;
+&nbsp;import java.sql.SQLException;
+&nbsp;import GoannaWatch.account.model.SqliteAccountDAO;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;
+&nbsp;/**
+&nbsp; * The main application class for the account.App application. This class extends the JavaFX Application class and starts the JavaFx lifecycle.
+&nbsp; */
+<b class="fc">&nbsp;public class App extends Application {</b>
+&nbsp;
+<b class="fc">&nbsp;    private static boolean darkMode = true;</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void start(Stage stage) throws IOException {
+&nbsp;        try {
+<b class="fc">&nbsp;            DatabaseInitializer.initialize();</b>
+&nbsp;
+<b class="fc">&nbsp;            SqliteAccountDAO accountDAO = new SqliteAccountDAO();</b>
+<b class="fc">&nbsp;            accountDAO.createDefaultExpert();</b>
+&nbsp;
+&nbsp;        } catch (SQLException e) {
+<b class="nc">&nbsp;            throw new IOException(&quot;Could not initialize the database.&quot;, e);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());</b>
+&nbsp;
+<b class="fc">&nbsp;        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(&quot;welcome.fxml&quot;));</b>
+<b class="fc">&nbsp;        Scene scene = new Scene(fxmlLoader.load());</b>
+<b class="fc">&nbsp;        stage.setTitle(&quot;GoannaWatch&quot;);</b>
+<b class="fc">&nbsp;        stage.setScene(scene);</b>
+<b class="fc">&nbsp;        stage.show();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Switches the application between dark mode and light mode.
+&nbsp;     */
+&nbsp;
+&nbsp;    public static void toggleTheme() {
+<b class="nc">&nbsp;        darkMode = !darkMode;</b>
+&nbsp;
+<b class="nc">&nbsp;        if (darkMode) {</b>
+<b class="nc">&nbsp;            Application.setUserAgentStylesheet(</b>
+<b class="nc">&nbsp;                    new PrimerDark().getUserAgentStylesheet()</b>
+&nbsp;            );
+&nbsp;        } else {
+<b class="nc">&nbsp;            Application.setUserAgentStylesheet(</b>
+<b class="nc">&nbsp;                    new PrimerLight().getUserAgentStylesheet()</b>
+&nbsp;            );
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns whether the application is currently using dark mode.
+&nbsp;     * @return true if dark mode is active, otherwise false.
+&nbsp;     */
+&nbsp;    public static boolean isDarkMode() {
+<b class="nc">&nbsp;        return darkMode;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The main entry point for the application. This method is used to launch the JavaFX application.
+&nbsp;     * @param args The command line arguments.
+&nbsp;     */
+&nbsp;    public static void main(String[] args) {
+<b class="fc">&nbsp;        launch(args);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-10-24 12:57</div>
+</div>
+</body>
+</html>

@@ -17,7 +17,7 @@ import java.util.List;
  * Looks up places using the Google Places API Text Search.
  * Each result includes coordinates.
  */
-public class PlacesService {
+public class PlaceSearchClient {
 
     private static final String SEARCH_URL = "https://places.googleapis.com/v1/places:searchText";
     private final HttpClient client = HttpClient.newHttpClient();
