@@ -23,12 +23,6 @@ public class SqliteCommentDAO implements ICommentDAO{
     @Override
     public void addComment(Comment comment) {
 
-        Account currentAccount = Session.getCurrentAccount();
-
-        if (currentAccount == null || !currentAccount.isExpert()) {
-            throw new SecurityException("Only experts can add comments.");
-        }
-
         String sql = """
                 INSERT INTO comments
                 (observation_id, author_id, text)
@@ -40,7 +34,7 @@ public class SqliteCommentDAO implements ICommentDAO{
 
             statement.setInt(1, comment.getObservationId());
 
-            statement.setInt(2, currentAccount.getId());
+            statement.setInt(2, comment.getAuthor().getId());
 
             statement.setString(3, comment.getText());
 

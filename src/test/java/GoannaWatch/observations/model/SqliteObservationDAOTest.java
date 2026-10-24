@@ -10,6 +10,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -366,6 +367,100 @@ public class SqliteObservationDAOTest {
             assertDoesNotThrow(() -> dao.deleteObservation(observation));
             assertNull(dao.getObservation(999999));
 
+        });
+    }
+
+    /**
+     * Verifies that a place's coordinates are saved and loaded.
+     */
+    @Test
+    void testCoordinatesAreSavedAndLoaded(@TempDir Path folder) throws Exception {
+        runWithTestDatabase(folder, "coordinates.db", () -> {
+            Account owner = createTestAccount("Owner", "owner@example.com");
+            Observation observation = new Observation(owner, "Lone Pine", -27.53, 152.97,
+                    "Koala", "Yes", LocalDate.of(2026, 10, 5), false);
+
+            SqliteObservationDAO dao = new SqliteObservationDAO();
+            dao.addObservation(observation);
+
+            Observation saved = dao.getObservation(observation.getId());
+            assertTrue(saved.hasCoordinates());
+            assertEquals(-27.53, saved.getLatitude(), 0.0001);
+            assertEquals(152.97, saved.getLongitude(), 0.0001);
+        });
+    }
+
+    /**
+     * Verifies that a missing location stays null
+     * */
+    @Test
+    void testObservationWithoutCoordinatesLoadsWithNulls(@TempDir Path folder) throws Exception {
+        runWithTestDatabase(folder, "no-coordinates.db", () -> {
+            Account owner = createTestAccount("Owner", "owner@example.com");
+            Observation observation = createTestObservation(owner);
+
+            Observation saved = new SqliteObservationDAO().getObservation(observation.getId());
+
+            assertFalse(saved.hasCoordinates());
+            assertNull(saved.getLatitude());
+            assertNull(saved.getLongitude());
+        });
+    }
+
+    /**
+     * Verifies that choosing a place for an existing observation is saved.
+     */
+    @Test
+    void testUpdatingPlaceSavesCoordinates(@TempDir Path folder) throws Exception {
+        runWithTestDatabase(folder, "update-place.db", () -> {
+            Account owner = createTestAccount("Owner", "owner@example.com");
+            Observation observation = createTestObservation(owner);
+
+            observation.setPlace(new Place("Gold Coast", -28.0, 153.4));
+            SqliteObservationDAO dao = new SqliteObservationDAO();
+            dao.updateObservation(observation);
+
+            Observation saved = dao.getObservation(observation.getId());
+            assertEquals("Gold Coast", saved.getLocation());
+            assertEquals(-28.0, saved.getLatitude(), 0.0001);
+            assertEquals(153.4, saved.getLongitude(), 0.0001);
+        });
+    }
+
+    /**
+     * Verifies that observations can be filtered to one account.
+     */
+    @Test
+    void testGetObservationsByAccountOnlyReturnsThatAccount(@TempDir Path folder) throws Exception {
+        runWithTestDatabase(folder, "by-account.db", () -> {
+            Account first = createTestAccount("First", "first@example.com");
+            Account second = createTestAccount("Second", "second@example.com");
+            Observation firstObservation = createTestObservation(first);
+            createTestObservation(second);
+
+            List<Observation> result = new SqliteObservationDAO().getObservationsByAccount(first);
+
+            assertEquals(1, result.size());
+            assertEquals(firstObservation.getId(), result.get(0).getId());
+            assertEquals(first.getId(), result.get(0).getObserver().getId());
+        });
+    }
+
+    /**
+     * Verifies that every observation is returned, oldest ID first.
+     */
+    @Test
+    void testGetAllObservationsReturnsEveryRowInIdOrder(@TempDir Path folder) throws Exception {
+        runWithTestDatabase(folder, "all-observations.db", () -> {
+            Account owner = createTestAccount("Owner", "owner@example.com");
+            Observation first = createTestObservation(owner);
+            Observation second = createTestObservation(owner);
+
+            List<Observation> all = new SqliteObservationDAO().getAllObservations();
+
+            assertEquals(2, all.size());
+            assertEquals(first.getId(), all.get(0).getId());
+            assertEquals(second.getId(), all.get(1).getId());
         });
     }
 

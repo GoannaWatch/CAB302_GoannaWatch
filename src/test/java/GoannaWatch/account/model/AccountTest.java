@@ -215,5 +215,38 @@ class AccountTest {
         );
     }
 
+    @Test
+    void newAccountDefaultsToUserRole() {
+        Account account = new Account("Luke", "Smith", "luke.smith@example.com", "Password1!");
+
+        assertEquals("user", account.getRole());
+        assertFalse(account.isExpert());
+    }
+
+    @Test
+    void invalidRoleShouldBeRejected() {
+        Account account = new Account("Luke", "Smith", "luke.smith@example.com", "Password1!");
+
+        assertThrows(IllegalArgumentException.class, () -> account.setRole("admin"));
+        assertThrows(IllegalArgumentException.class, () -> account.setRole(null));
+    }
+
+    @Test
+    void accountCreatedWithoutPasswordHasNoPassword() {
+        Account account = new Account("Luke", "Smith", "luke.smith@example.com");
+
+        assertNull(account.getPassword());
+    }
+
+    @Test
+    void passwordValidationHelperMatchesTheRules() {
+        assertTrue(Account.isPasswordValid("Password1!"));
+        assertFalse(Account.isPasswordValid("short1!"));
+        assertFalse(Account.isPasswordValid("password1!"));
+        assertFalse(Account.isPasswordValid("Password 1!"));
+        assertFalse(Account.isPasswordValid(""));
+        assertFalse(Account.isPasswordValid(null));
+    }
+
 
 }
