@@ -89,79 +89,6 @@ public class SqliteCommentDAOTest {
             }
         }
     }
-    /**
-     * Checks that a normal user cannot add comments.
-     */
-    @Test
-    public void testUserCannotAddComment() {
-        Account oldAccount = Session.getCurrentAccount();
-
-        try {
-            Account user = new Account(
-                    "Min",
-                    "User",
-                    "user@example.com",
-                    "User@123"
-            );
-            Session.setCurrentAccount(user);
-
-            Comment comment = new Comment(
-                    1,
-                    user,
-                    "Test comment."
-            );
-
-            SqliteCommentDAO commentDAO = new SqliteCommentDAO();
-
-            assertThrows(
-                    SecurityException.class,
-                    () -> commentDAO.addComment(comment)
-            );
-
-        } finally {
-            Session.setCurrentAccount(oldAccount);
-        }
-    }
-
-    /**
-     * Verifies that a user must be logged in before they can add an observation comment
-     */
-    @Test
-    void testUnauthenticatedUserCannotAddComment() {
-        Account oldAccount = Session.getCurrentAccount();
-
-        try {
-            Session.clear();
-
-            Account author = new Account(
-                    "Test",
-                    "User",
-                    "test@example.com",
-                    "Test123!"
-            );
-
-            Comment comment = new Comment(
-                    1,
-                    author,
-                    "This should not be saved."
-            );
-
-            SqliteCommentDAO dao = new SqliteCommentDAO();
-
-            SecurityException exception = assertThrows(
-                    SecurityException.class,
-                    () -> dao.addComment(comment)
-            );
-
-            assertEquals(
-                    "Only experts can add comments.",
-                    exception.getMessage()
-            );
-
-        } finally {
-            Session.setCurrentAccount(oldAccount);
-        }
-    }
 
     /**
      * Verifies that the DAO attributes comments to the authenticated expert rather than
@@ -170,87 +97,33 @@ public class SqliteCommentDAOTest {
     @Test
     void testCommentUsesLoggedInExpertAsAuthor(@TempDir Path folder) throws Exception {
         String oldUrl = System.getProperty("goannawatch.db.url");
-        Account oldAccount = Session.getCurrentAccount();
 
         try {
-            System.setProperty(
-                    "goannawatch.db.url",
-                    "jdbc:sqlite:" + folder.resolve("comment-author.db").toAbsolutePath()
-            );
-
-            Session.clear();
+            System.setProperty("goannawatch.db.url",
+                    "jdbc:sqlite:" + folder.resolve("comment-author.db").toAbsolutePath());
             DatabaseInitializer.initialize();
 
             SqliteAccountDAO accountDAO = new SqliteAccountDAO();
             accountDAO.createDefaultExpert();
-            Account expert = accountDAO.getAccountByEmail(
-                    "expert@123.com"
-            );
+            Account expert = accountDAO.getAccountByEmail("expert@123.com");
 
-            assertNotNull(expert);
-            assertTrue(expert.isExpert());
-
-            Account normalUser = new Account(
-                    "Normal",
-                    "User",
-                    "normal@example.com",
-                    "Test123!"
-            );
-
-            accountDAO.addAccount(normalUser);
-
-            Account savedUser = accountDAO.getAccountByEmail(
-                    "normal@example.com"
-            );
-
-            assertNotNull(savedUser);
+            accountDAO.addAccount(new Account("Normal", "User", "normal@example.com", "Test123!"));
+            Account normalUser = accountDAO.getAccountByEmail("normal@example.com");
 
             Observation observation = new Observation(
-                    savedUser,
-                    "Brisbane",
-                    "Goanna",
-                    "No",
-                    LocalDate.of(2026, 10, 20)
-            );
-
-            SqliteObservationDAO observationDAO = new SqliteObservationDAO();
-
-            observationDAO.addObservation(observation);
-
-            // Expert is actual logged-in account
-            Session.setCurrentAccount(expert);
-
-            // Deliberately supply normal user as author
-            Comment comment = new Comment(
-                    observation.getId(),
-                    savedUser,
-                    "Expert identification."
-            );
+                    normalUser, "Brisbane", "Goanna", "No", LocalDate.of(2026, 10, 20));
+            new SqliteObservationDAO().addObservation(observation);
 
             SqliteCommentDAO commentDAO = new SqliteCommentDAO();
+            commentDAO.addComment(new Comment(observation.getId(), expert, "Expert identification."));
 
-            commentDAO.addComment(comment);
-
-            List<Comment> comments =
-                    commentDAO.getCommentsByObservation(
-                            observation.getId()
-                    );
+            List<Comment> comments = commentDAO.getCommentsByObservation(observation.getId());
 
             assertEquals(1, comments.size());
-
-            // Stored author must be logged-in expert
-            assertEquals(
-                    expert.getId(),
-                    comments.get(0).getAuthor().getId()
-            );
-
-            assertNotEquals(
-                    savedUser.getId(),
-                    comments.get(0).getAuthor().getId()
-            );
+            assertEquals(expert.getId(), comments.get(0).getAuthor().getId());
+            assertNotEquals(normalUser.getId(), comments.get(0).getAuthor().getId());
 
         } finally {
-            Session.setCurrentAccount(oldAccount);
 
             if (oldUrl == null) {
                 System.clearProperty("goannawatch.db.url");

@@ -121,8 +121,6 @@ public class AccountRoleTest {
             expert.setRole("expert");
             service.grantExpert(expert, user.getId());
 
-            dao.grantExpert(user.getId());
-
             Account updatedUser = dao.getAccountByEmail("user@example.com");
             assertNotNull(updatedUser);
             assertTrue(updatedUser.isExpert());

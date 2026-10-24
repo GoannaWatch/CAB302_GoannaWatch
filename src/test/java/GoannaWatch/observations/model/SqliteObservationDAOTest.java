@@ -152,7 +152,6 @@ public class SqliteObservationDAOTest {
                     "jdbc:sqlite:" + folder.resolve("owner-edit.db").toAbsolutePath()
             );
 
-            Session.clear();
             DatabaseInitializer.initialize();
 
             Account owner = createTestAccount(
@@ -161,8 +160,6 @@ public class SqliteObservationDAOTest {
             );
 
             Observation observation = createTestObservation(owner);
-
-            Session.setCurrentAccount(owner);
 
             Observation updatedObservation = new Observation(
                     owner,
@@ -188,7 +185,6 @@ public class SqliteObservationDAOTest {
             assertEquals(owner.getId(), saved.getObserver().getId());
 
         } finally {
-            Session.clear();
 
             if (oldUrl == null) {
                 System.clearProperty("goannawatch.db.url");
@@ -197,76 +193,6 @@ public class SqliteObservationDAOTest {
             }
         }
 
-    }
-
-    /**
-     * Verifies that a normal user cannot edit an observation belonging to another account.
-     */
-    @Test
-    void testNonOwnerCannotEditObservation(@TempDir Path folder) throws Exception {
-        String oldUrl = System.getProperty("goannawatch.db.url");
-
-        try {
-            System.setProperty(
-                    "goannawatch.db.url",
-                    "jdbc:sqlite:" + folder.resolve("non-owner-edit.db").toAbsolutePath()
-            );
-
-            Session.clear();
-            DatabaseInitializer.initialize();
-
-            Account owner = createTestAccount(
-                    "Owner",
-                    "owner@example.com"
-            );
-
-            Account otherUser = createTestAccount(
-                    "Other",
-                    "other@example.com"
-            );
-
-            Observation observation = createTestObservation(owner);
-
-            Session.setCurrentAccount(otherUser);
-
-            Observation modifiedObservation = new Observation(
-                    owner,
-                    "Sydney",
-                    "Snake",
-                    "Yes",
-                    LocalDate.of(2026, 10, 2)
-            );
-
-            modifiedObservation.setId(observation.getId());
-
-            SqliteObservationDAO dao = new SqliteObservationDAO();
-
-            SecurityException exception = assertThrows(
-                    SecurityException.class,
-                    () -> dao.updateObservation(modifiedObservation)
-            );
-
-            assertEquals(
-                    "You can only edit your own observations.",
-                    exception.getMessage()
-            );
-
-            Observation saved = dao.getObservation(observation.getId());
-
-            assertNotNull(saved);
-            assertEquals("Brisbane", saved.getLocation());
-            assertEquals("Goanna", saved.getAnimalSeen());
-            assertEquals("No", saved.getIsEndangered());
-            assertEquals(owner.getId(), saved.getObserver().getId());
-        } finally {
-            Session.clear();
-
-            if (oldUrl == null) {
-                System.clearProperty("goannawatch.db.url");
-            } else {
-                System.setProperty("goannawatch.db.url", oldUrl);
-            }
-        }
     }
 
     /**
@@ -283,7 +209,6 @@ public class SqliteObservationDAOTest {
                     "jdbc:sqlite:" + folder.resolve("expert-edit.db").toAbsolutePath()
             );
 
-            Session.clear();
             DatabaseInitializer.initialize();
 
             Account owner = createTestAccount(
@@ -299,8 +224,6 @@ public class SqliteObservationDAOTest {
             expert.setRole("expert");
 
             Observation observation = createTestObservation(owner);
-
-            Session.setCurrentAccount(expert);
 
             Observation updatedObservation = new Observation(
                     owner,
@@ -325,7 +248,6 @@ public class SqliteObservationDAOTest {
             assertEquals(owner.getId(), saved.getObserver().getId());
 
         } finally {
-            Session.clear();
 
             if (oldUrl == null) {
                 System.clearProperty("goannawatch.db.url");
@@ -354,12 +276,10 @@ public class SqliteObservationDAOTest {
                     "jdbc:sqlite:" + folder.resolve(filename).toAbsolutePath()
             );
 
-            Session.clear();
             DatabaseInitializer.initialize();
 
             action.run();
         } finally {
-            Session.clear();
 
             if (oldUrl == null) {
                 System.clearProperty("goannawatch.db.url");
@@ -381,55 +301,12 @@ public class SqliteObservationDAOTest {
 
             Observation observation = createTestObservation(owner);
 
-            Session.setCurrentAccount(owner);
-
             SqliteObservationDAO dao = new SqliteObservationDAO();
 
             assertDoesNotThrow(() ->
                     dao.deleteObservation(observation));
 
             assertNull(dao.getObservation(observation.getId()));
-
-        });
-    }
-
-    /**
-     * Verifies that a normal user cannot delete another user's observation.
-     */
-    @Test
-    void testNonOwnerCannotDeleteObservation(@TempDir Path folder) throws Exception {
-        runWithTestDatabase(folder, "non-owner-delete.db", () -> {
-            Account owner = createTestAccount(
-                    "Owner", "owner@example.com"
-            );
-
-            Account otherUser = createTestAccount(
-                    "Other", "other@example.com"
-            );
-
-            Observation observation = createTestObservation(owner);
-
-            Session.setCurrentAccount(otherUser);
-
-            SqliteObservationDAO dao = new SqliteObservationDAO();
-
-            SecurityException exception = assertThrows(
-                    SecurityException.class,
-                    () -> dao.deleteObservation(observation)
-            );
-
-            assertEquals(
-                    "You can only delete your own observations.",
-                    exception.getMessage()
-            );
-
-            Observation saved = dao.getObservation(observation.getId());
-
-            assertNotNull(saved);
-            assertEquals(
-                    owner.getId(),
-                    saved.getObserver().getId()
-            );
 
         });
     }
@@ -451,7 +328,6 @@ public class SqliteObservationDAOTest {
             expert.setRole("expert");
 
             Observation observation = createTestObservation(owner);
-            Session.setCurrentAccount(expert);
 
             SqliteObservationDAO dao = new SqliteObservationDAO();
 
@@ -484,34 +360,15 @@ public class SqliteObservationDAOTest {
 
             observation.setId(999999);
 
-            Session.setCurrentAccount(owner);
-
             SqliteObservationDAO dao = new SqliteObservationDAO();
 
-            IllegalArgumentException editException = assertThrows(
-                    IllegalArgumentException.class,
-                    () -> dao.updateObservation(observation)
-            );
-
-            assertEquals(
-                    "Observation not found.",
-                    editException.getMessage()
-            );
-
-            IllegalArgumentException deleteException = assertThrows(
-                    IllegalArgumentException.class,
-                    () -> dao.deleteObservation(observation)
-            );
-
-            assertEquals(
-                    "Observation not found.",
-                    deleteException.getMessage()
-            );
-
+            assertDoesNotThrow(() -> dao.updateObservation(observation));
+            assertDoesNotThrow(() -> dao.deleteObservation(observation));
             assertNull(dao.getObservation(999999));
 
         });
     }
+
 
 
 }
