@@ -30,7 +30,15 @@ public class MapController {
     @FXML
     private NavBarController navBarController;
 
-    private final IObservationDAO observationDAO = new SqliteObservationDAO();
+    private final IObservationDAO observationDAO;
+
+    public MapController() {
+        this(new SqliteObservationDAO());
+    }
+
+    MapController(IObservationDAO observationDAO) {
+        this.observationDAO = observationDAO;
+    }
 
     /**
      * Initialises the controller class. This method is automatically called after the fxml file has been loaded.

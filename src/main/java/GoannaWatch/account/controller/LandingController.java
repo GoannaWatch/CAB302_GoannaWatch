@@ -18,14 +18,22 @@ import java.util.List;
  */
 public class LandingController {
 
-    private final ObservationService service = new ObservationService(
-            new SqliteObservationDAO(), new SqliteCommentDAO(), new SqliteFavouriteDAO());
-
     @FXML private NavBarController navBarController;
     @FXML private Label welcomeLabel, emailLabel;
     @FXML private Label totalLabel, mineLabel, endangeredLabel, favouritesLabel;
     @FXML private Label detailLabel;
     @FXML private ListView<Observation> recentList, endangeredList;
+
+    private final ObservationService service;
+
+    public LandingController() {
+        this(new ObservationService(
+                new SqliteObservationDAO(), new SqliteCommentDAO(), new SqliteFavouriteDAO()));
+    }
+
+    LandingController(ObservationService service) {
+        this.service = service;
+    }
 
     @FXML
     public void initialize() {

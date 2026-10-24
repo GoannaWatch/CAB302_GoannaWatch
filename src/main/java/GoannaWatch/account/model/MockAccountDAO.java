@@ -72,4 +72,20 @@ public class MockAccountDAO implements IAccountDAO {
     public List<Account> getAllAccounts() {
         return new ArrayList<>(accounts);
     }
+
+    @Override
+    public boolean checkPassword(String email, String password) {
+        Account account = getAccountByEmail(email);
+        return account != null && account.getPassword() != null
+                && account.getPassword().equals(password);
+    }
+
+    @Override
+    public void grantExpert(int accountId) {
+        Account account = getAllAccounts().stream()
+                .filter(a -> a.getId() == accountId)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Account not found."));
+        account.setRole("expert");
+    }
 }

@@ -1,9 +1,6 @@
 package GoannaWatch.account.controller;
 
-import GoannaWatch.account.model.Account;
-import GoannaWatch.account.model.Navigator;
-import GoannaWatch.account.model.Session;
-import GoannaWatch.account.model.SqliteAccountDAO;
+import GoannaWatch.account.model.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -17,7 +14,7 @@ import java.io.IOException;
  */
 public class UsersController {
 
-    private final SqliteAccountDAO accountDAO = new SqliteAccountDAO();
+    private final AccountService service;
 
     @FXML
     private TableView<Account> usersTable;
@@ -35,6 +32,14 @@ public class UsersController {
     private Label messageLabel;
 
     @FXML private NavBarController navBarController;
+
+    public UsersController() {
+        this(new AccountService(new SqliteAccountDAO()));
+    }
+
+    UsersController(AccountService service) {
+        this.service = service;
+    }
 
     /**
      * Initialises the table and loads users.
@@ -76,7 +81,7 @@ public class UsersController {
      * Loads accounts from the database into the table.
      */
     private void loadAccounts() {
-        usersTable.getItems().setAll(accountDAO.getAllAccounts());
+        usersTable.getItems().setAll(service.getAllAccounts());
     }
 
     /**
@@ -98,7 +103,7 @@ public class UsersController {
         }
 
         try {
-            accountDAO.grantExpert(selectedAccount.getId());
+            service.grantExpert(Session.getCurrentAccount(), selectedAccount.getId());
 
             // Update the role shown in the table.
             selectedAccount.setRole("expert");

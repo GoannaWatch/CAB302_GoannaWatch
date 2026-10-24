@@ -166,8 +166,8 @@ public class SqliteAccountDAO implements IAccountDAO{
      * @throws SQLException if the database query fails
      */
 
-    public boolean checkPassword(String email, String password)
-            throws SQLException {
+    @Override
+    public boolean checkPassword(String email, String password) {
 
         String sql = "SELECT password FROM accounts WHERE email = ?";
 
@@ -178,12 +178,12 @@ public class SqliteAccountDAO implements IAccountDAO{
 
             try (ResultSet result = statement.executeQuery()) {
                 if (result.next()) {
-                    String hash = result.getString("password");
-                    return PasswordUtils.checkPassword(password, hash);
+                    return PasswordUtils.checkPassword(password, result.getString("password"));
                 }
             }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to check password: " + e.getMessage(), e);
         }
-
         return false;
     }
 
@@ -227,34 +227,19 @@ public class SqliteAccountDAO implements IAccountDAO{
      * @throws IllegalArgumentException if the target account does not exist
      * @throws RuntimeException         if the database update fails
      */
+    @Override
     public void grantExpert(int accountId) {
-        Account currentAccount = Session.getCurrentAccount();
-
-        if (currentAccount == null || !currentAccount.isExpert()) {
-            throw new SecurityException(
-                    "Only experts can grant expert access."
-            );
-        }
-
-        String sql = """
-                UPDATE accounts
-                SET role = 'expert'
-                WHERE id = ?
-                """;
+        String sql = "UPDATE accounts SET role = 'expert' WHERE id = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, accountId);
-
             if (statement.executeUpdate() == 0) {
                 throw new IllegalArgumentException("Account not found.");
             }
-
         } catch (SQLException e) {
-            throw new RuntimeException(
-                    "Failed to grant expert access.", e
-            );
+            throw new RuntimeException("Failed to grant expert access.", e);
         }
     }
 }

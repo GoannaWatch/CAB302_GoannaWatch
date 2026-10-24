@@ -38,6 +38,23 @@ public interface IAccountDAO {
     Account getAccountByEmail(String email);
 
     /**
+     * Checks an account's password
+     * @param email the account email
+     * @param password the password entered by the user
+     * @return true if the users exists and the password matches
+     */
+    boolean checkPassword(String email, String password);
+
+    /**
+     * Gives an account the expert role. Who may do this is decided by AccountService.
+     *
+     * @param accountId the ID of the account to promote
+     * @throws IllegalArgumentException if no account has that ID
+     */
+    void grantExpert(int accountId);
+
+
+    /**
      * Retrieves all accounts from the database.
      *
      * @return A list of all accounts in the database.

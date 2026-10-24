@@ -15,8 +15,6 @@ import java.util.Optional;
  */
 public class LoginController {
 
-    private final IAccountDAO accountDAO;
-
     @FXML
     private TextField emailTextField;
 
@@ -35,16 +33,18 @@ public class LoginController {
     @FXML
     private Button cancelButton;
 
+    private final AccountService service;
+
     /**
      * Constructs a new LoginController with an AccountManager that uses an in-memory database to perform CRUD operations on accounts.
      */
     public LoginController() {
-        accountDAO = new  SqliteAccountDAO();
+        this(new SqliteAccountDAO());
     }
 
     // Package-private constructor allows a test DAO for unit testing without changing normal app behaviour
     LoginController(IAccountDAO accountDAO) {
-        this.accountDAO = accountDAO;
+        this.service = new AccountService(accountDAO);
     }
 
     /**
@@ -88,19 +88,10 @@ public class LoginController {
         }
 
         try {
-            Account account = accountDAO.getAccountByEmail(email);
+            Account account = service.authenticate(email, password);
 
-            boolean passwordMatches;
-
-            if (accountDAO instanceof SqliteAccountDAO sqliteAccountDAO) {
-                passwordMatches = sqliteAccountDAO.checkPassword(email, password);
-            } else {
-                passwordMatches = account != null
-                        && account.getPassword() != null
-                        && account.getPassword().equals(password);
-            }
-
-            if (account == null || !passwordMatches) {
+            if (account == null) {
+                passwordField.clear();
                 showLoginFeedback("Incorrect email or password.");
                 return;
             }
@@ -108,7 +99,7 @@ public class LoginController {
             Session.setCurrentAccount(account);
             Navigator.goTo(loginButton, "landing.fxml");
 
-        } catch (SQLException e) {
+        } catch (RuntimeException e) {
             showLoginFeedback("Could not access the database. Please try again.");
             System.err.println(e.getMessage());
         }
@@ -125,7 +116,7 @@ public class LoginController {
     }
 
     Optional<Account> findAccountByEmail(String email) {
-        List<Account> accounts = accountDAO.getAllAccounts();
+        List<Account> accounts = service.getAllAccounts();
         return accounts.stream()
                 .filter(a -> a.getEmail().equalsIgnoreCase(email))
                 .findFirst();
